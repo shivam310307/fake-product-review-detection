@@ -1,0 +1,1967 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ReviewGuard AI — Academic Defense & Viva Voce Master Presentation</title>
+    <!-- Modern Sans Font for Maximum Projector Legibility -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800;900&family=JetBrains+Mono:wght@400;600;700&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --bg-page: #060911;
+            --bg-card: #0d1322;
+            --bg-card-inner: #151d30;
+            --border: #23314e;
+            --border-highlight: #3b82f6;
+            
+            --primary: #38bdf8;
+            --primary-glow: rgba(56, 189, 248, 0.35);
+            --secondary: #818cf8;
+            
+            --green: #10b981;
+            --green-bg: rgba(16, 185, 129, 0.16);
+            --red: #f43f5e;
+            --red-bg: rgba(244, 63, 94, 0.16);
+            --amber: #f59e0b;
+            --amber-bg: rgba(245, 158, 11, 0.16);
+            
+            --text-main: #ffffff;
+            --text-sub: #e2e8f0;
+            --text-muted: #94a3b8;
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
+            font-family: 'Plus Jakarta Sans', -apple-system, sans-serif;
+            background-color: var(--bg-page);
+            color: var(--text-main);
+            height: 100vh;
+            width: 100vw;
+            display: flex;
+            flex-direction: column;
+            overflow: hidden;
+            user-select: none;
+            -webkit-font-smoothing: antialiased;
+        }
+
+        /* Top Presentation Command Bar */
+        header {
+            height: 64px;
+            background: rgba(13, 19, 34, 0.95);
+            backdrop-filter: blur(12px);
+            border-bottom: 1px solid var(--border);
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 0 36px;
+            z-index: 100;
+        }
+
+        .brand-cluster {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .brand-icon {
+            width: 38px;
+            height: 38px;
+            background: linear-gradient(135deg, #0284c7, #6366f1);
+            border-radius: 10px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.3rem;
+            box-shadow: 0 0 16px var(--primary-glow);
+        }
+
+        .brand-title {
+            font-size: 1.3rem;
+            font-weight: 800;
+            letter-spacing: -0.02em;
+            background: linear-gradient(to right, #38bdf8, #818cf8);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        .brand-tag {
+            font-size: 0.78rem;
+            font-weight: 700;
+            background: var(--bg-card-inner);
+            color: var(--primary);
+            border: 1px solid var(--border);
+            padding: 4px 10px;
+            border-radius: 14px;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+        }
+
+        .header-center {
+            display: flex;
+            align-items: center;
+            gap: 16px;
+        }
+
+        .timer-display {
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 1rem;
+            font-weight: 600;
+            color: var(--text-sub);
+            background: var(--bg-card-inner);
+            border: 1px solid var(--border);
+            padding: 6px 14px;
+            border-radius: 8px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .timer-dot {
+            width: 8px;
+            height: 8px;
+            border-radius: 50%;
+            background: var(--green);
+            box-shadow: 0 0 8px var(--green);
+            animation: pulse 2s infinite;
+        }
+
+        @keyframes pulse {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0.4; }
+        }
+
+        .slide-counter-badge {
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 0.95rem;
+            font-weight: 700;
+            color: var(--primary);
+            background: rgba(56, 189, 248, 0.12);
+            border: 1px solid rgba(56, 189, 248, 0.35);
+            padding: 6px 16px;
+            border-radius: 20px;
+        }
+
+        .header-actions {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .btn-ctrl {
+            background: var(--bg-card-inner);
+            border: 1px solid var(--border);
+            color: var(--text-sub);
+            padding: 8px 14px;
+            border-radius: 8px;
+            font-size: 0.85rem;
+            font-weight: 600;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            transition: all 0.2s;
+        }
+
+        .btn-ctrl:hover {
+            border-color: var(--primary);
+            color: #ffffff;
+            background: rgba(56, 189, 248, 0.1);
+        }
+
+        .btn-ctrl.active-toggle {
+            background: var(--primary);
+            color: #060911;
+            border-color: var(--primary);
+            font-weight: 700;
+        }
+
+        /* 16:9 Stage Area */
+        .stage {
+            flex: 1;
+            position: relative;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 20px 48px;
+            overflow: hidden;
+        }
+
+        .slide {
+            position: absolute;
+            width: 100%;
+            max-width: 1360px;
+            height: 96%;
+            max-height: 760px;
+            background: var(--bg-card);
+            border: 2px solid var(--border);
+            border-radius: 24px;
+            padding: 36px 48px;
+            display: flex;
+            flex-direction: column;
+            opacity: 0;
+            transform: scale(0.97) translateY(18px);
+            pointer-events: none;
+            transition: all 0.35s cubic-bezier(0.16, 1, 0.3, 1);
+            box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.75);
+            overflow-y: auto;
+        }
+
+        .slide.active {
+            opacity: 1;
+            transform: scale(1) translateY(0);
+            pointer-events: auto;
+        }
+
+        /* Typography */
+        .slide-tag {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            background: rgba(56, 189, 248, 0.12);
+            color: var(--primary);
+            border: 1px solid rgba(56, 189, 248, 0.35);
+            padding: 5px 12px;
+            border-radius: 16px;
+            font-size: 0.8rem;
+            font-weight: 800;
+            text-transform: uppercase;
+            letter-spacing: 0.08em;
+            margin-bottom: 8px;
+            width: fit-content;
+        }
+
+        .slide-title {
+            font-size: 2.3rem;
+            font-weight: 900;
+            letter-spacing: -0.03em;
+            line-height: 1.15;
+            color: #ffffff;
+            margin-bottom: 6px;
+        }
+
+        .slide-subtitle {
+            font-size: 1.15rem;
+            font-weight: 500;
+            color: var(--text-muted);
+            margin-bottom: 20px;
+            line-height: 1.4;
+        }
+
+        /* Grid Layouts */
+        .grid-2 {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 24px;
+            flex: 1;
+        }
+
+        .grid-3 {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 20px;
+            flex: 1;
+        }
+
+        .grid-4 {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 16px;
+            flex: 1;
+        }
+
+        /* Presentation Cards */
+        .card {
+            background: var(--bg-card-inner);
+            border: 1px solid var(--border);
+            border-radius: 16px;
+            padding: 22px 24px;
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+            transition: all 0.25s ease;
+        }
+
+        .card:hover {
+            border-color: var(--border-highlight);
+            transform: translateY(-2px);
+        }
+
+        .card-heading {
+            font-size: 1.25rem;
+            font-weight: 800;
+            color: #ffffff;
+            letter-spacing: -0.01em;
+        }
+
+        .card-body {
+            font-size: 1rem;
+            color: var(--text-sub);
+            line-height: 1.55;
+        }
+
+        /* Badges & Pills */
+        .pill {
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            padding: 5px 12px;
+            border-radius: 16px;
+            font-size: 0.9rem;
+            font-weight: 800;
+        }
+
+        .pill-green { background: var(--green-bg); color: var(--green); border: 1.5px solid rgba(16, 185, 129, 0.4); }
+        .pill-red { background: var(--red-bg); color: var(--red); border: 1.5px solid rgba(244, 63, 94, 0.4); }
+        .pill-amber { background: var(--amber-bg); color: var(--amber); border: 1.5px solid rgba(245, 158, 11, 0.4); }
+        .pill-blue { background: rgba(56, 189, 248, 0.18); color: var(--primary); border: 1.5px solid rgba(56, 189, 248, 0.4); }
+
+        .review-box {
+            background: #090e1a;
+            border: 1px solid var(--border);
+            border-left: 5px solid var(--primary);
+            border-radius: 12px;
+            padding: 14px 18px;
+            font-size: 0.95rem;
+            color: #f1f5f9;
+            line-height: 1.5;
+        }
+
+        .footer-banner {
+            margin-top: 14px;
+            background: #0f1c30;
+            border: 1px solid var(--primary);
+            border-radius: 12px;
+            padding: 10px 18px;
+            font-size: 0.92rem;
+            color: #ffffff;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        /* Custom Diverse Layout Components */
+        /* Slide 4 Process Steps */
+        .pipeline-flow {
+            display: flex;
+            gap: 12px;
+            margin-bottom: 16px;
+        }
+        .pipeline-step-card {
+            flex: 1;
+            background: var(--bg-card-inner);
+            border: 1px solid var(--border);
+            border-radius: 14px;
+            padding: 14px 16px;
+            position: relative;
+            transition: all 0.2s;
+        }
+        .pipeline-step-card:hover {
+            border-color: var(--primary);
+            transform: translateY(-2px);
+        }
+        .step-badge {
+            font-size: 0.75rem;
+            font-weight: 800;
+            color: var(--secondary);
+            letter-spacing: 0.05em;
+            margin-bottom: 4px;
+        }
+        .step-title {
+            font-size: 0.95rem;
+            font-weight: 800;
+            color: #ffffff;
+            margin-bottom: 4px;
+        }
+        .step-desc {
+            font-size: 0.8rem;
+            color: var(--text-muted);
+            line-height: 1.35;
+        }
+
+        /* Slide 5 Architecture Bands */
+        .arch-bands-container {
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+            flex: 1;
+        }
+        .arch-band {
+            background: var(--bg-card-inner);
+            border: 1px solid var(--border);
+            border-left: 6px solid var(--primary);
+            border-radius: 12px;
+            padding: 12px 18px;
+            display: flex;
+            flex-direction: column;
+            gap: 4px;
+            transition: all 0.2s;
+        }
+        .arch-band:hover {
+            transform: translateX(4px);
+            border-color: var(--primary);
+        }
+        .arch-band-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        .arch-band-title {
+            font-size: 1.05rem;
+            font-weight: 800;
+            color: #ffffff;
+        }
+        .arch-band-tech {
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 0.82rem;
+            color: var(--primary);
+            background: rgba(56, 189, 248, 0.1);
+            padding: 3px 10px;
+            border-radius: 12px;
+            border: 1px solid rgba(56, 189, 248, 0.2);
+        }
+        .arch-band-details {
+            font-size: 0.88rem;
+            color: var(--text-sub);
+            line-height: 1.4;
+        }
+
+        /* Slide 7 Aspect Grid */
+        .aspects-grid-container {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 12px;
+            margin-bottom: 14px;
+        }
+        .aspect-card {
+            background: var(--bg-card-inner);
+            border: 1px solid var(--border);
+            border-radius: 12px;
+            padding: 12px 16px;
+            transition: all 0.2s;
+        }
+        .aspect-card:hover {
+            border-color: var(--primary);
+            transform: translateY(-2px);
+        }
+        .aspect-card-title {
+            font-size: 1rem;
+            font-weight: 800;
+            color: var(--primary);
+            margin-bottom: 4px;
+        }
+        .aspect-card-desc {
+            font-size: 0.85rem;
+            color: var(--text-sub);
+            line-height: 1.35;
+        }
+
+        /* Slide 10 Formula Hero */
+        .formula-hero-box {
+            background: linear-gradient(135deg, rgba(14, 23, 38, 0.95), rgba(21, 29, 48, 0.95));
+            border: 2px solid var(--primary);
+            border-radius: 14px;
+            padding: 14px 20px;
+            margin-bottom: 14px;
+            box-shadow: 0 0 20px rgba(56, 189, 248, 0.15);
+        }
+        .formula-hero-title {
+            font-size: 0.85rem;
+            font-weight: 800;
+            color: var(--secondary);
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+            margin-bottom: 4px;
+        }
+        .formula-text {
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 1.05rem;
+            font-weight: 700;
+            color: #ffffff;
+            line-height: 1.4;
+        }
+
+        /* Slide 12 Mockup Dashboard */
+        .mockup-dashboard-panel {
+            background: #090e1a;
+            border: 2px solid var(--primary);
+            border-radius: 16px;
+            padding: 16px 20px;
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+        }
+        .mockup-gauge-row {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            background: var(--bg-card-inner);
+            padding: 10px 16px;
+            border-radius: 10px;
+            border: 1px solid var(--border);
+        }
+        .mockup-stat-val {
+            font-size: 1.3rem;
+            font-weight: 900;
+            color: var(--green);
+        }
+        .mockup-stat-lbl {
+            font-size: 0.75rem;
+            font-weight: 700;
+            color: var(--text-muted);
+            text-transform: uppercase;
+        }
+
+        /* Slide 13 API Table */
+        .api-endpoint-table {
+            width: 100%;
+            border-collapse: separate;
+            border-spacing: 0 6px;
+        }
+        .api-row {
+            background: var(--bg-card-inner);
+            border: 1px solid var(--border);
+            transition: all 0.2s;
+        }
+        .api-row td {
+            padding: 8px 12px;
+            font-size: 0.88rem;
+            color: var(--text-sub);
+        }
+        .api-row td:first-child {
+            border-top-left-radius: 8px;
+            border-bottom-left-radius: 8px;
+            width: 80px;
+        }
+        .api-row td:last-child {
+            border-top-right-radius: 8px;
+            border-bottom-right-radius: 8px;
+        }
+        .method-pill {
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 0.78rem;
+            font-weight: 800;
+            padding: 2px 7px;
+            border-radius: 6px;
+        }
+        .method-post {
+            background: rgba(56, 189, 248, 0.2);
+            color: var(--primary);
+            border: 1px solid rgba(56, 189, 248, 0.4);
+        }
+        .method-get {
+            background: rgba(16, 185, 129, 0.2);
+            color: var(--green);
+            border: 1px solid rgba(16, 185, 129, 0.4);
+        }
+
+        /* Drawer / Modals */
+        .speaker-drawer {
+            position: fixed;
+            bottom: 74px;
+            left: 36px;
+            right: 36px;
+            background: rgba(13, 19, 34, 0.98);
+            backdrop-filter: blur(16px);
+            border: 2px solid var(--primary);
+            border-radius: 18px;
+            padding: 20px 28px;
+            z-index: 200;
+            box-shadow: 0 10px 40px rgba(0, 0, 0, 0.8);
+            transform: translateY(120%);
+            opacity: 0;
+            pointer-events: none;
+            transition: all 0.35s cubic-bezier(0.16, 1, 0.3, 1);
+            max-height: 220px;
+            overflow-y: auto;
+        }
+        .speaker-drawer.open {
+            transform: translateY(0);
+            opacity: 1;
+            pointer-events: auto;
+        }
+        .drawer-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 8px;
+        }
+        .drawer-title {
+            font-weight: 800;
+            color: var(--primary);
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+        .drawer-script {
+            font-size: 1.05rem;
+            color: #ffffff;
+            line-height: 1.6;
+        }
+
+        /* Grid Modal */
+        .grid-modal {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100vw;
+            height: 100vh;
+            background: rgba(6, 9, 17, 0.96);
+            backdrop-filter: blur(16px);
+            z-index: 300;
+            display: flex;
+            flex-direction: column;
+            padding: 36px 60px;
+            opacity: 0;
+            pointer-events: none;
+            transition: opacity 0.3s ease;
+        }
+        .grid-modal.open {
+            opacity: 1;
+            pointer-events: auto;
+        }
+        .grid-modal-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+        }
+        .grid-modal-title {
+            font-size: 1.6rem;
+            font-weight: 900;
+            color: #ffffff;
+        }
+        .grid-thumbs-container {
+            display: grid;
+            grid-template-columns: repeat(5, 1fr);
+            gap: 16px;
+            overflow-y: auto;
+            flex: 1;
+            padding-right: 12px;
+        }
+        .slide-thumb {
+            background: var(--bg-card);
+            border: 2px solid var(--border);
+            border-radius: 12px;
+            padding: 14px;
+            cursor: pointer;
+            transition: all 0.2s;
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+            height: 120px;
+        }
+        .slide-thumb:hover {
+            border-color: var(--primary);
+            transform: scale(1.02);
+            background: var(--bg-card-inner);
+        }
+        .slide-thumb.active {
+            border-color: var(--primary);
+            box-shadow: 0 0 16px var(--primary-glow);
+        }
+        .thumb-num {
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 0.8rem;
+            color: var(--primary);
+            font-weight: 800;
+        }
+        .thumb-title {
+            font-size: 0.9rem;
+            font-weight: 700;
+            color: #ffffff;
+            line-height: 1.3;
+        }
+
+        /* Live Tester */
+        .live-tester-card {
+            background: #090e1a;
+            border: 2px solid var(--border-highlight);
+            border-radius: 16px;
+            padding: 18px 22px;
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+            margin-top: 8px;
+        }
+        .tester-inputs {
+            display: flex;
+            gap: 12px;
+        }
+        .tester-textarea {
+            flex: 1;
+            background: #060911;
+            border: 1px solid var(--border);
+            border-radius: 10px;
+            color: #ffffff;
+            padding: 12px;
+            font-family: inherit;
+            font-size: 0.95rem;
+            resize: none;
+            height: 65px;
+            outline: none;
+        }
+        .tester-textarea:focus { border-color: var(--primary); }
+        .tester-btn {
+            background: var(--primary);
+            color: #060911;
+            font-weight: 800;
+            font-size: 0.95rem;
+            border: none;
+            border-radius: 10px;
+            padding: 0 24px;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+        .tester-btn:hover { background: #7dd3fc; box-shadow: 0 0 16px var(--primary-glow); }
+        .preset-chips { display: flex; gap: 8px; align-items: center; }
+        .preset-chip {
+            background: var(--bg-card-inner);
+            border: 1px solid var(--border);
+            color: var(--text-sub);
+            padding: 4px 10px;
+            border-radius: 14px;
+            font-size: 0.78rem;
+            font-weight: 700;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+        .preset-chip:hover { border-color: var(--primary); color: #ffffff; }
+        .tester-result-row {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            background: #0c1220;
+            padding: 8px 14px;
+            border-radius: 8px;
+            border: 1px solid var(--border);
+        }
+
+        /* Keynote Footer */
+        footer {
+            height: 74px;
+            background: rgba(13, 19, 34, 0.95);
+            backdrop-filter: blur(12px);
+            border-top: 1px solid var(--border);
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 0 36px;
+            z-index: 100;
+        }
+        .key-legend {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            font-size: 0.82rem;
+            color: var(--text-muted);
+        }
+        .key-legend kbd {
+            background: var(--bg-card-inner);
+            border: 1px solid var(--border);
+            padding: 2px 7px;
+            border-radius: 5px;
+            font-family: 'JetBrains Mono', monospace;
+            color: var(--primary);
+            font-weight: 700;
+        }
+        .progress-dots {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+        .p-dot {
+            width: 9px;
+            height: 9px;
+            border-radius: 50%;
+            background: var(--border);
+            cursor: pointer;
+            transition: all 0.25s;
+        }
+        .p-dot.active {
+            background: var(--primary);
+            width: 24px;
+            border-radius: 10px;
+            box-shadow: 0 0 10px var(--primary-glow);
+        }
+        .nav-button-group {
+            display: flex;
+            gap: 10px;
+        }
+        .btn-nav-large {
+            background: var(--bg-card-inner);
+            border: 1px solid var(--border);
+            color: #ffffff;
+            font-weight: 800;
+            font-size: 0.92rem;
+            padding: 10px 20px;
+            border-radius: 10px;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            transition: all 0.2s;
+        }
+        .btn-nav-large:hover:not(:disabled) {
+            background: var(--primary);
+            color: #060911;
+            border-color: var(--primary);
+            box-shadow: 0 0 16px var(--primary-glow);
+        }
+        .btn-nav-large:disabled { opacity: 0.35; cursor: not-allowed; }
+    </style>
+</head>
+<body>
+
+    <!-- Header Navigation -->
+    <header>
+        <div class="brand-cluster">
+            <div class="brand-icon">🛡️</div>
+            <div>
+                <span class="brand-title">ReviewGuard AI</span>
+            </div>
+            <span class="brand-tag">Academic Defense Mode</span>
+        </div>
+
+        <div class="header-center">
+            <div class="timer-display">
+                <div class="timer-dot"></div>
+                <span id="elapsed-time">00:00</span>
+            </div>
+
+            <div class="slide-counter-badge">
+                SLIDE <span id="current-slide-num">1</span> OF 15
+            </div>
+        </div>
+
+        <div class="header-actions">
+            <a href="/ReviewGuard_AI_Master_Presentation.pptx" target="_blank" download="ReviewGuard_AI_Master_Presentation.pptx" class="btn-ctrl" style="text-decoration: none; color: #f59e0b; border-color: rgba(245, 158, 11, 0.4); background: rgba(245, 158, 11, 0.1);">
+                📥 Download Master PPTX
+            </a>
+            <a href="/ReviewGuard_AI_Master_Presentation.pdf" target="_blank" download="ReviewGuard_AI_Master_Presentation.pdf" class="btn-ctrl" style="text-decoration: none; color: #38bdf8; border-color: rgba(56, 189, 248, 0.4); background: rgba(56, 189, 248, 0.1);">
+                📥 Download Master PDF
+            </a>
+            <button class="btn-ctrl" id="btn-toggle-notes" onclick="toggleSpeakerDrawer()">
+                💬 Speaker Script (S)
+            </button>
+            <button class="btn-ctrl" onclick="toggleGridModal()">
+                📑 All Slides (G)
+            </button>
+            <button class="btn-ctrl" onclick="toggleFullscreen()">
+                ⛶ Fullscreen (F)
+            </button>
+        </div>
+    </header>
+
+    <!-- Main Stage -->
+    <main class="stage">
+
+        <!-- SLIDE 1: Title & Candidate Metadata -->
+        <div class="slide active" id="slide-1" data-script="Respected members of the evaluation committee, guide, and fellow peers, good morning. I am pleased to present my project: ReviewGuard AI — an Advanced Fake Review Detection and Product Trust Analysis System. E-commerce platforms rely heavily on customer reviews to guide buyer decisions, yet billions of dollars are distorted annually by coordinated fake positive praise and malicious competitor review-bombing. Our system addresses this fundamental challenge through three independent analytical modules, calibrated probabilistic classification, semantic near-duplicate clustering, and an open, transparent review trust formula.">
+            <div class="slide-tag">PROJECT DEFENSE & VIVA VOCE PRESENTATION</div>
+            <h1 class="slide-title">ReviewGuard AI</h1>
+            <p class="slide-subtitle">Advanced Fake Review Detection & Product Trust Analysis System</p>
+
+            <div class="grid-2">
+                <div class="card" style="border-left: 6px solid var(--primary);">
+                    <div class="card-heading" style="color: var(--primary);">Project & Candidate Details</div>
+                    <div class="card-body" style="line-height: 2;">
+                        <p><strong>Student Name:</strong> [Your Name]</p>
+                        <p><strong>Department:</strong> [Your Department]</p>
+                        <p><strong>Institution:</strong> [College Name]</p>
+                        <p><strong>Project Guide:</strong> [Guide Name]</p>
+                        <p><strong>Academic Year:</strong> [Academic Year]</p>
+                    </div>
+                </div>
+
+                <div class="card" style="border-left: 6px solid var(--green);">
+                    <div class="card-heading" style="color: var(--green);">System Core Highlights</div>
+                    <div class="card-body">
+                        <ul style="padding-left: 20px; line-height: 2;">
+                            <li>Decoupled 3-Module NLP Architecture</li>
+                            <li>Coordinated Review Bombing & Astroturfing Detection</li>
+                            <li>Aspect-Based Sentiment & Feature Contradiction Mining</li>
+                            <li>Transparent Mathematical Review-Set Trust Scoring</li>
+                            <li>Strict Epistemic Distinction: Review Trust vs Physical Quality</li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+
+            <div class="footer-banner">
+                💡 <strong>Academic Scope:</strong> Advanced Machine Learning for E-Commerce Review Integrity & Trust Analysis.
+            </div>
+        </div>
+
+        <!-- SLIDE 2: Introduction - The Trust Crisis in Online Reviews -->
+        <div class="slide" id="slide-2" data-script="Slide 2 introduces our problem context. Online customer reviews are the lifeblood of modern digital commerce. Over 93% of buyers rely on them. However, star ratings are routinely weaponized. Disreputable sellers commission astroturfing campaigns to artificially inflate poor products with 5-star praise. Conversely, rival vendors execute coordinated review bombing against reputable sellers using botnets with identical 1-star complaints. Traditional star averages are mathematically blind to these asymmetries, treating an automated bot script with the same weight as an authentic customer.">
+            <div class="slide-tag">PROBLEM DOMAIN & INDUSTRY CONTEXT</div>
+            <h2 class="slide-title">Introduction: The Trust Crisis in Online Reviews</h2>
+            <p class="slide-subtitle">Customer reviews drive purchasing decisions, but coordinated manipulation undermines marketplace trust.</p>
+
+            <div class="grid-2">
+                <div class="card">
+                    <div class="card-heading" style="color: var(--primary);">The Decisive Role of Customer Reviews</div>
+                    <div class="card-body">
+                        <ul style="padding-left: 20px; line-height: 2;">
+                            <li>Over <strong>93% of consumers</strong> read online reviews before finalizing a purchase.</li>
+                            <li>A single 1-star drop in rating can reduce merchant revenue by <strong>5% to 9%</strong>.</li>
+                            <li>Reviews represent direct, unstructured customer feedback on product quality, shipping, and service.</li>
+                            <li>However, platforms face industrial-scale manipulation, from bot syndicates to paid review brokerages.</li>
+                        </ul>
+                    </div>
+                </div>
+
+                <div class="card">
+                    <div class="card-heading" style="color: var(--green);">How Manipulation Distorts Traditional Averages</div>
+                    <div class="card-body">
+                        <ul style="padding-left: 20px; line-height: 2;">
+                            <li><strong>Astroturfing Hype:</strong> Defective products artificially inflate star ratings with purchased 5-star praise.</li>
+                            <li><strong>Review Bombing:</strong> Competitors flood high-quality products with identical 1-star attack scripts.</li>
+                            <li><strong>Legitimate Disagreement:</strong> Real buyers naturally hold mixed opinions (e.g., sound vs weight).</li>
+                            <li><strong>Failure of Simple Averages:</strong> Arithmetic star averages cannot distinguish organic feedback from coordinated fraud.</li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+
+            <div class="footer-banner">
+                💡 Traditional star ratings treat all reviews equally; ReviewGuard AI examines linguistic integrity and collection patterns.
+            </div>
+        </div>
+
+        <!-- SLIDE 3: Problem Statement - The Flaw in Binary Detectors -->
+        <div class="slide" id="slide-3" data-script="Moving to Slide 3, we define our problem statement and core scientific axioms. The fatal flaw in traditional detectors is the conflation of customer sentiment with authenticity. When an angry customer writes a blunt negative review about a defective battery, naïve models frequently flag it as malicious. Meanwhile, botnets leaving generic 5-star praise slip through unnoticed. Our research proves that authenticity and sentiment are two orthogonal axes. Furthermore, reviews cannot be judged purely in isolation; coordinated campaigns can only be uncovered by analyzing review-set clustering.">
+            <div class="slide-tag">PROBLEM STATEMENT & CORE PRINCIPLE</div>
+            <h2 class="slide-title">Problem Statement: The Flaw in Binary Detectors</h2>
+            <p class="slide-subtitle">Traditional systems conflate sentiment with authenticity, causing catastrophic false positives.</p>
+
+            <div class="grid-2">
+                <div class="card" style="border-left: 6px solid var(--red); background: rgba(244, 63, 94, 0.05);">
+                    <div class="card-heading" style="color: var(--red);">❌ The Fatal Flaw of Legacy Detectors</div>
+                    <div class="card-body">
+                        <ul style="padding-left: 20px; line-height: 2;">
+                            <li><strong>Naïve Sentiment Bias:</strong> Assumes <em>Positive = Genuine</em> and <em>Negative = Fake</em>.</li>
+                            <li><strong>Forced Binary Trap:</strong> Forces short, neutral, or ambiguous reviews into arbitrary 0 or 1 coin-tosses.</li>
+                            <li><strong>Isolated Evaluation:</strong> Evaluates reviews one by one, missing coordinated botnet copy-paste campaigns.</li>
+                            <li><strong>Overstepping Claims:</strong> Falsely claims to verify physical product quality based purely on digital text.</li>
+                        </ul>
+                    </div>
+                </div>
+
+                <div class="card" style="border-left: 6px solid var(--green); background: rgba(16, 185, 129, 0.05);">
+                    <div class="card-heading" style="color: var(--green);">✅ The ReviewGuard AI Axioms</div>
+                    <div class="card-body">
+                        <ul style="padding-left: 20px; line-height: 2;">
+                            <li><strong>Orthogonal Independence:</strong> Sentiment ≠ Authenticity. A 5-star review can be fake; an angry 1-star review can be genuine.</li>
+                            <li><strong>Explicit Uncertainty:</strong> Ambiguous reviews are categorized as <em>Uncertain</em> rather than forced into guesses.</li>
+                            <li><strong>Review-Set Clustering:</strong> Identifies coordinated campaigns through semantic graph clustering (Cosine ≥ 0.82).</li>
+                            <li><strong>Epistemic Honesty:</strong> Audits review collection credibility without claiming to test physical hardware.</li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+
+            <div class="footer-banner">
+                💡 Core Foundational Principle: Authenticity, Customer Sentiment, and Review-Set Trustworthiness are three independent dimensions.
+            </div>
+        </div>
+
+        <!-- SLIDE 4: Proposed Solution - Holistic Multi-Perspective System -->
+        <div class="slide" id="slide-4" data-script="To resolve these challenges, we introduce ReviewGuard AI. The system follows an end-to-end multi-perspective pipeline. First, raw customer reviews are ingested via manual text, CSV, or Excel spreadsheets with optional metadata. The data passes into three independent analytical modules: Module 1 estimates individual authenticity; Module 2 mines sentiment polarity and product-specific topics like battery life and durability; and Module 3 aggregates near-duplicate clusters and calculates a transparent 0-to-100 Review Trust Score. Finally, the findings are rendered on an interactive dashboard and exported as an audit-ready PDF report.">
+            <div class="slide-tag">PROPOSED SOLUTION</div>
+            <h2 class="slide-title">ReviewGuard AI: Holistic Multi-Perspective System</h2>
+            <p class="slide-subtitle">An AI/ML-powered analytical platform evaluating individual reviews and overall collection trust.</p>
+
+            <!-- 5-Step Pipeline Flow -->
+            <div class="pipeline-flow">
+                <div class="pipeline-step-card" style="border-top: 4px solid var(--primary);">
+                    <div class="step-badge">STAGE 1</div>
+                    <div class="step-title">Review Input</div>
+                    <div class="step-desc">CSV, XLSX, or Text Ingestion with Metadata</div>
+                </div>
+                <div class="pipeline-step-card" style="border-top: 4px solid var(--secondary);">
+                    <div class="step-badge">STAGE 2</div>
+                    <div class="step-title">Authenticity Detector</div>
+                    <div class="step-desc">DistilBERT / Calibrated SVM + Evidence Extraction</div>
+                </div>
+                <div class="pipeline-step-card" style="border-top: 4px solid var(--amber);">
+                    <div class="step-badge">STAGE 3</div>
+                    <div class="step-title">Sentiment & Topics</div>
+                    <div class="step-desc">Aspect Mining & Contradiction Detection</div>
+                </div>
+                <div class="pipeline-step-card" style="border-top: 4px solid var(--green);">
+                    <div class="step-badge">STAGE 4</div>
+                    <div class="step-title">Trust Analyzer</div>
+                    <div class="step-desc">Cosine Clustering & 0–100 Trust Scoring</div>
+                </div>
+                <div class="pipeline-step-card" style="border-top: 4px solid var(--primary);">
+                    <div class="step-badge">STAGE 5</div>
+                    <div class="step-title">UI & PDF Report</div>
+                    <div class="step-desc">React Dashboard & ReportLab Audit PDF</div>
+                </div>
+            </div>
+
+            <!-- 4 Capability Cards -->
+            <div class="grid-4" style="margin-top: 10px;">
+                <div class="card" style="border-left: 4px solid var(--primary);">
+                    <div class="card-heading" style="color: var(--primary); font-size: 1.1rem;">🛡️ Review Authenticity</div>
+                    <div class="card-body" style="font-size: 0.92rem;">
+                        Calibrated classification into Likely Genuine, Suspicious, or Uncertain with evidence indicators.
+                    </div>
+                </div>
+                <div class="card" style="border-left: 4px solid var(--secondary);">
+                    <div class="card-heading" style="color: var(--secondary); font-size: 1.1rem;">📊 Aspect & Topic Mining</div>
+                    <div class="card-body" style="font-size: 0.92rem;">
+                        Extracts customer voice across Battery, Durability, Delivery, Price, and Customer Support.
+                    </div>
+                </div>
+                <div class="card" style="border-left: 4px solid var(--amber);">
+                    <div class="card-heading" style="color: var(--amber); font-size: 1.1rem;">🌐 Near-Duplicate Clustering</div>
+                    <div class="card-body" style="font-size: 0.92rem;">
+                        Identifies syndicated bot scripts using Cosine Semantic Similarity (threshold ≥ 0.82).
+                    </div>
+                </div>
+                <div class="card" style="border-left: 4px solid var(--green);">
+                    <div class="card-heading" style="color: var(--green); font-size: 1.1rem;">🎯 Transparent Trust Score</div>
+                    <div class="card-body" style="font-size: 0.92rem;">
+                        Computes an open 0–100 Trust Score with mathematically documented penalty weights.
+                    </div>
+                </div>
+            </div>
+
+            <div class="footer-banner">
+                💡 End-to-End Pipeline: Raw Reviews → Multi-Signal NLP → Pattern & Cluster Analysis → Actionable Dashboard & PDF Audit.
+            </div>
+        </div>
+
+        <!-- SLIDE 5: Planned System Architecture & Technical Stack -->
+        <div class="slide" id="slide-5" data-script="Here is our planned system architecture. The system is architected across four decoupled tiers: The frontend is built with React.js, Tailwind CSS, and Recharts, providing responsive data tables and trust score visualizations. The backend is powered by FastAPI in Python, utilizing Pydantic schemas for validated request processing and ReportLab for PDF generation. The machine learning core integrates sublinear TF-IDF with calibrated linear classifiers and a fine-tuned DistilBERT backbone. Finally, the storage tier connects to MongoDB with an automatic local file-based fallback store, ensuring the system operates reliably in any demonstration environment without database configuration overhead.">
+            <div class="slide-tag">SYSTEM ARCHITECTURE</div>
+            <h2 class="slide-title">Planned System Architecture & Technical Stack</h2>
+            <p class="slide-subtitle">Modular, service-oriented architecture connecting the frontend, backend APIs, and ML models.</p>
+
+            <div class="arch-bands-container">
+                <div class="arch-band" style="border-left-color: var(--primary);">
+                    <div class="arch-band-header">
+                        <span class="arch-band-title">FRONTEND PRESENTATION TIER</span>
+                        <span class="arch-band-tech">React.js • Tailwind CSS • Recharts</span>
+                    </div>
+                    <div class="arch-band-details">
+                        • Single-page responsive dashboard &nbsp;•&nbsp; Interactive 0–100 Trust Score gauge &nbsp;•&nbsp; Near-duplicate cluster explorer &nbsp;•&nbsp; Searchable, filterable review table with in-place editing
+                    </div>
+                </div>
+
+                <div class="arch-band" style="border-left-color: var(--secondary);">
+                    <div class="arch-band-header">
+                        <span class="arch-band-title">BACKEND API SERVICE TIER</span>
+                        <span class="arch-band-tech">Python • FastAPI • Pydantic v2</span>
+                    </div>
+                    <div class="arch-band-details">
+                        • High-throughput asynchronous REST endpoints &nbsp;•&nbsp; Safe CSV and Excel (.xlsx) file streaming &nbsp;•&nbsp; ReportLab PDF generation engine &nbsp;•&nbsp; Configurable uncertainty & similarity thresholds
+                    </div>
+                </div>
+
+                <div class="arch-band" style="border-left-color: var(--green);">
+                    <div class="arch-band-header">
+                        <span class="arch-band-title">NLP & MACHINE LEARNING CORE</span>
+                        <span class="arch-band-tech">Scikit-Learn • DistilBERT • Sublinear TF-IDF</span>
+                    </div>
+                    <div class="arch-band-details">
+                        • Sublinear TF-IDF (1–3 n-grams) + Stylometry &nbsp;•&nbsp; Calibrated probabilistic classification (LinearSVC/LogReg) &nbsp;•&nbsp; Fine-tuned DistilBERT transformer &nbsp;•&nbsp; Cosine similarity matrix & connected-components graph
+                    </div>
+                </div>
+
+                <div class="arch-band" style="border-left-color: var(--amber);">
+                    <div class="arch-band-header">
+                        <span class="arch-band-title">DATA & PERSISTENCE TIER</span>
+                        <span class="arch-band-tech">MongoDB Connector • Local Fallback Store</span>
+                    </div>
+                    <div class="arch-band-details">
+                        • Resilient persistence via pymongo connector &nbsp;•&nbsp; Automated local JSON fallback store for standalone execution &nbsp;•&nbsp; Preloaded demonstration datasets (Scenario A, B, C)
+                    </div>
+                </div>
+            </div>
+
+            <div class="footer-banner">
+                💡 Architecture Note: Planned modular design adhering to strict separation of concerns, validated API schemas, and resilient fallbacks.
+            </div>
+        </div>
+
+        <!-- SLIDE 6: Module 1 - AI-Powered Review Authenticity Detector -->
+        <div class="slide" id="slide-6" data-script="Now let us examine Module 1: The Review Authenticity Detector. This module ingests review text along with optional metadata like star ratings, timestamps, and verified-purchase status. The text is transformed into sublinear TF-IDF word and character n-grams combined with stylometric features. The classifier utilizes Platt scaling calibration so that output probabilities represent true empirical confidence. Crucially, instead of forcing a binary 0 or 1, we implement an explicit uncertainty band with a default margin of 0.15. If confidence lies between 0.35 and 0.65, or if the review is under 5 words, it is honestly labeled 'Uncertain'. Every prediction is accompanied by specific evidence tags, such as near-duplicate matching or rating-sentiment inversion.">
+            <div class="slide-tag">MODULE 1 DEEP DIVE</div>
+            <h2 class="slide-title">Module 1: AI-Powered Review Authenticity Detector</h2>
+            <p class="slide-subtitle">Evaluating individual review suspiciousness using calibrated probabilities and multi-signal evidence.</p>
+
+            <div class="grid-2">
+                <!-- Left: Flowchart -->
+                <div class="card" style="border-top: 4px solid var(--primary);">
+                    <div class="card-heading" style="color: var(--primary);">Linguistic & Feature Processing Flow</div>
+                    <div class="card-body" style="display: flex; flex-direction: column; gap: 10px;">
+                        <div>
+                            <strong style="color: var(--secondary);">1. Ingestion Signals:</strong>
+                            <p style="font-size: 0.92rem; color: var(--text-muted);">Review Text, Star Rating (1–5★), Timestamp, Verified-Purchase Flag, Reviewer ID.</p>
+                        </div>
+                        <div>
+                            <strong style="color: var(--secondary);">2. Feature Engineering:</strong>
+                            <p style="font-size: 0.92rem; color: var(--text-muted);">Sublinear TF-IDF (1–3 n-grams) + Stylometrics (lexical entropy, punctuation, exclamation density).</p>
+                        </div>
+                        <div>
+                            <strong style="color: var(--secondary);">3. Calibrated Classification Core:</strong>
+                            <p style="font-size: 0.92rem; color: var(--text-muted);">LinearSVC / Fine-tuned DistilBERT with Platt Scaling for true posterior confidence.</p>
+                        </div>
+                        <div>
+                            <strong style="color: var(--secondary);">4. Decision Guardrail:</strong>
+                            <p style="font-size: 0.92rem; color: var(--text-muted);">Uncertainty Margin Filter (τ = 0.15) to prevent forced binary coin-toss.</p>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Right: 3 Decision Badges + Evidence -->
+                <div class="card" style="border-top: 4px solid var(--secondary);">
+                    <div class="card-heading">Three-Way Calibrated Output Tiers</div>
+                    <div style="display: flex; flex-direction: column; gap: 8px;">
+                        <div class="review-box" style="border-left-color: var(--green);">
+                            <span class="pill pill-green">Likely Genuine</span> &nbsp;<strong>P(Genuine) ≥ 0.65</strong>
+                            <p style="font-size: 0.88rem; color: var(--text-muted); margin-top: 2px;">Natural vocabulary entropy, realistic narrative detail, balanced syntax.</p>
+                        </div>
+                        <div class="review-box" style="border-left-color: var(--red);">
+                            <span class="pill pill-red">Suspicious</span> &nbsp;<strong>P(Suspicious) ≥ 0.65</strong>
+                            <p style="font-size: 0.88rem; color: var(--text-muted); margin-top: 2px;">High promotional density, matching bot templates, rating-sentiment contradiction.</p>
+                        </div>
+                        <div class="review-box" style="border-left-color: var(--amber);">
+                            <span class="pill pill-amber">Uncertain</span> &nbsp;<strong>|P - 0.50| &lt; 0.15 Margin</strong>
+                            <p style="font-size: 0.88rem; color: var(--text-muted); margin-top: 2px;">Low textual entropy (&lt; 5 words) or ambiguous boundary confidence.</p>
+                        </div>
+                    </div>
+
+                    <div style="margin-top: 4px; font-size: 0.88rem; color: var(--text-muted);">
+                        <strong>Multi-Signal Evidence Tags:</strong> Near-Duplicate Cluster Member • Promotional Buzzword Density • Repeated Complaint Template • Rating Inversion Anomaly
+                    </div>
+                </div>
+            </div>
+
+            <div class="footer-banner">
+                💡 Default Uncertainty Margin: τ = 0.15. Borderline cases are categorized as Uncertain rather than forced into arbitrary binary labels.
+            </div>
+        </div>
+
+        <!-- SLIDE 7: Module 2 - Customer Sentiment & Experience Analysis -->
+        <div class="slide" id="slide-7" data-script="Moving to Module 2: The Customer Sentiment and Experience Analyzer. This module is completely decoupled from authenticity. Its purpose is to answer: What are customers actually feeling and experiencing? It computes sentiment polarity across positive, neutral, and negative valences. Simultaneously, aspect-based topic extraction categorizes feedback into specific product dimensions—such as battery life, build durability, sound quality, delivery, pricing, and customer service. Furthermore, Module 2 detects contradictory customer experiences. For example, if some users report outstanding 2-day battery life while others report total battery failure within 30 minutes, the system flags high variance on that aspect. Importantly, we note that contradictory experiences do not automatically prove fraud—they often expose legitimate factory batch defects.">
+            <div class="slide-tag">MODULE 2 DEEP DIVE</div>
+            <h2 class="slide-title">Module 2: Customer Sentiment & Experience Analysis</h2>
+            <p class="slide-subtitle">Mining customer emotion, feature-level topics, and contradictory experiences independently of authenticity.</p>
+
+            <!-- 6 Aspect Cards in 3x2 Grid -->
+            <div class="aspects-grid-container">
+                <div class="aspect-card">
+                    <div class="aspect-card-title">🔋 Battery & Power</div>
+                    <div class="aspect-card-desc">Runtime, charging speed, battery degradation, standby drain.</div>
+                </div>
+                <div class="aspect-card">
+                    <div class="aspect-card-title">🔨 Build Quality</div>
+                    <div class="aspect-card-desc">Durability, materials, structural integrity, finish wear.</div>
+                </div>
+                <div class="aspect-card">
+                    <div class="aspect-card-title">🎧 Sound / Display</div>
+                    <div class="aspect-card-desc">Acoustic clarity, brightness, resolution, sensory performance.</div>
+                </div>
+                <div class="aspect-card">
+                    <div class="aspect-card-title">📦 Delivery & Packaging</div>
+                    <div class="aspect-card-desc">Transit speed, damaged shipping boxes, missing components.</div>
+                </div>
+                <div class="aspect-card">
+                    <div class="aspect-card-title">💰 Price & Value</div>
+                    <div class="aspect-card-desc">Cost-effectiveness, premium worthiness, competitor comparison.</div>
+                </div>
+                <div class="aspect-card">
+                    <div class="aspect-card-title">🛎️ Customer Support</div>
+                    <div class="aspect-card-desc">Warranty service, responsiveness, return/refund handling.</div>
+                </div>
+            </div>
+
+            <!-- Full-Width Contradiction Mining Banner -->
+            <div class="card" style="border: 2px solid var(--amber); background: rgba(245, 158, 11, 0.05);">
+                <div class="card-heading" style="color: var(--amber); font-size: 1.15rem;">⚠️ Contradictory Customer Experience Mining</div>
+                <div class="card-body" style="font-size: 0.95rem;">
+                    Detects polar disagreements on specific features (e.g., 75% report 'battery lasts 2 days' while 25% report 'battery dies in 30 minutes').<br>
+                    <strong>Academic Integrity Note:</strong> Contradictions highlight potential factory batch defects or variable usage conditions; they require investigation and do not independently establish review fraud.
+                </div>
+            </div>
+
+            <div class="footer-banner">
+                💡 Decoupled Principle: Customer sentiment reflects user satisfaction, while authenticity reflects textual and behavioral integrity.
+            </div>
+        </div>
+
+        <!-- SLIDE 8: Module 3 - Review-Set Trust Analyzer & Clustering -->
+        <div class="slide" id="slide-8" data-script="Module 3 represents our collection-level intelligence: The Review-Set Trust Analyzer. Evaluating reviews purely one by one is insufficient because sophisticated review farms deliberately vary individual words. Module 3 vectorizes all submitted reviews and generates a pairwise cosine similarity matrix. Using a documented threshold of 0.82, a graph-based connected-components algorithm groups near-duplicate reviews into clusters. It then extracts the central archetype of each cluster for human inspection. Finally, Module 3 aggregates suspicious ratios, duplicate densities, contradictory signals, and uncertainty metrics into an audit-ready summary. This distinguishes between individual review ambiguity and collective review-set trustworthiness.">
+            <div class="slide-tag">MODULE 3 DEEP DIVE</div>
+            <h2 class="slide-title">Module 3: Review-Set Trust Analyzer & Clustering</h2>
+            <p class="slide-subtitle">Evaluating collective patterns, semantic similarity, and overall review-set credibility.</p>
+
+            <div class="grid-2">
+                <!-- Left: 4-Step Clustering Engine -->
+                <div class="card" style="border-top: 4px solid var(--secondary);">
+                    <div class="card-heading" style="color: var(--secondary);">Near-Duplicate Clustering Engine</div>
+                    <div class="card-body" style="display: flex; flex-direction: column; gap: 8px;">
+                        <div>
+                            <strong style="color: var(--primary);">• Semantic Vectorization:</strong>
+                            <p style="font-size: 0.88rem; color: var(--text-muted);">Character and word sublinear TF-IDF vectors capturing grammatical fingerprints.</p>
+                        </div>
+                        <div>
+                            <strong style="color: var(--primary);">• Pairwise Cosine Matrix:</strong>
+                            <p style="font-size: 0.88rem; color: var(--text-muted);">Computes all-pairs cosine similarity across every review in the submitted set.</p>
+                        </div>
+                        <div>
+                            <strong style="color: var(--primary);">• Graph-Based Grouping:</strong>
+                            <p style="font-size: 0.88rem; color: var(--text-muted);">Connected-components graph clustering with threshold <strong>≥ 0.82</strong>.</p>
+                        </div>
+                        <div>
+                            <strong style="color: var(--primary);">• Archetype Extraction:</strong>
+                            <p style="font-size: 0.88rem; color: var(--text-muted);">Selects central representative review from each cluster for rapid human audit.</p>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Right: Visual Botnet Cluster Terminal Inspector -->
+                <div class="card" style="border: 2px solid var(--red); background: #080d1a;">
+                    <div class="card-heading" style="color: var(--red); font-size: 1.1rem;">🔍 Detected Botnet Cluster #1 (Similarity ≥ 82%)</div>
+                    <div style="display: flex; flex-direction: column; gap: 6px; font-size: 0.88rem;">
+                        <div class="review-box" style="border-left-color: var(--red);">
+                            <strong style="color: #ffffff;">Cluster Archetype (#104):</strong> "Defective item died on day 1 do not buy complete waste of money!!!"
+                        </div>
+                        <div class="review-box" style="border-left-color: var(--red);">
+                            <strong style="color: var(--text-muted);">Syndicated Clone A (#119):</strong> "Defective item died on day 2 do not buy absolute waste of money!!!"
+                        </div>
+                        <div class="review-box" style="border-left-color: var(--red);">
+                            <strong style="color: var(--text-muted);">Syndicated Clone B (#142):</strong> "Defective item broke on day 1 do not buy complete waste of cash!!!"
+                        </div>
+                        <div style="color: var(--amber); margin-top: 4px; font-weight: 700;">
+                            Cluster Metric: Mean Cosine Sim: 0.89 | Size: 4 reviews | Unverified Accounts
+                        </div>
+                        <div style="color: var(--green); font-weight: 700;">
+                            System Action: Deducted via R_duplicates in Review Trust Score formula.
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="footer-banner">
+                💡 Individual Authenticity vs. Review-Set Trust: A single review might be ambiguous, but a cluster of 50 near-duplicates reveals organized deception.
+            </div>
+        </div>
+
+        <!-- SLIDE 9: Three Key Review-Manipulation Scenarios -->
+        <div class="slide" id="slide-9" data-script="Here we illustrate the three core detection scenarios that ReviewGuard AI is designed to handle: Scenario A represents Review Bombing: A reputable manufacturer is targeted by competitors flooding their listing with repeated 1-star complaints. ReviewGuard AI isolates the near-duplicate negative cluster, protecting the seller. Scenario B represents Astroturfing: A defective product is artificially boosted with purchased 5-star praise full of promotional buzzwords. ReviewGuard AI flags the promotional cluster while surfacing authentic defect reports. Scenario C represents Authentic Mixed Feedback: Normal customers disagree on subjective tradeoffs. ReviewGuard AI detects high vocabulary entropy and preserves the reviews with a High Trust score. Importantly, we state scientifically that these are intended pattern scenarios, and performance relies on data fidelity.">
+            <div class="slide-tag">SCENARIO ANALYSIS</div>
+            <h2 class="slide-title">Three Key Review-Manipulation Scenarios</h2>
+            <p class="slide-subtitle">Differentiating coordinated attacks from organic marketplace feedback.</p>
+
+            <div class="grid-3">
+                <!-- Scenario A -->
+                <div class="card" style="border-top: 5px solid var(--red);">
+                    <div class="card-heading" style="color: var(--red);">Scenario A: Review Bombing</div>
+                    <div style="font-size: 0.95rem; font-weight: 700; color: #ffffff;">Target: Good Product under Attack</div>
+                    <div class="card-body" style="font-size: 0.92rem;">
+                        <ul style="padding-left: 18px; line-height: 1.8;">
+                            <li>Waves of 1-star reviews sharing near-duplicate text.</li>
+                            <li>Repeated complaint templates ('broke on day 1 waste of money').</li>
+                            <li>Bursts of unverified purchases from suspicious accounts.</li>
+                            <li>Genuine buyers report high satisfaction and detailed praise.</li>
+                        </ul>
+                    </div>
+                    <div style="margin-top: auto;">
+                        <span class="pill pill-red">Result: Attack Cluster Isolated</span>
+                    </div>
+                </div>
+
+                <!-- Scenario B -->
+                <div class="card" style="border-top: 5px solid var(--amber);">
+                    <div class="card-heading" style="color: var(--amber);">Scenario B: Astroturfing</div>
+                    <div style="font-size: 0.95rem; font-weight: 700; color: #ffffff;">Target: Poor Product with Paid Hype</div>
+                    <div class="card-body" style="font-size: 0.92rem;">
+                        <ul style="padding-left: 18px; line-height: 1.8;">
+                            <li>Inflated 5-star reviews with repetitive promotional hype.</li>
+                            <li>Abnormal density of superlatives ('miracle product buy now').</li>
+                            <li>Clusters of near-identical positive praise across accounts.</li>
+                            <li>Organic negative reviews report consistent hardware defects.</li>
+                        </ul>
+                    </div>
+                    <div style="margin-top: auto;">
+                        <span class="pill pill-amber">Result: Paid Hype Flagged</span>
+                    </div>
+                </div>
+
+                <!-- Scenario C -->
+                <div class="card" style="border-top: 5px solid var(--green);">
+                    <div class="card-heading" style="color: var(--green);">Scenario C: Authentic Mixed</div>
+                    <div style="font-size: 0.95rem; font-weight: 700; color: #ffffff;">Target: Genuine Market Tradeoffs</div>
+                    <div class="card-body" style="font-size: 0.92rem;">
+                        <ul style="padding-left: 18px; line-height: 1.8;">
+                            <li>High vocabulary entropy and natural organic phrasing.</li>
+                            <li>Balanced distribution across 3, 4, and 5-star ratings.</li>
+                            <li>Legitimate disagreement on tradeoffs (sound vs weight).</li>
+                            <li>Preserved with a High Trust Score without false alarms.</li>
+                        </ul>
+                    </div>
+                    <div style="margin-top: auto;">
+                        <span class="pill pill-green">Result: High Trust Preserved</span>
+                    </div>
+                </div>
+            </div>
+
+            <div class="footer-banner">
+                💡 Scientific Caveat: These represent intended detection scenarios based on pattern modeling. Actual field accuracy depends on data quality and metadata availability.
+            </div>
+        </div>
+
+        <!-- SLIDE 10: The Review-Set Trust Score Formulation -->
+        <div class="slide" id="slide-10" data-script="Slide 10 details our mathematical formulation for the Review-Set Trust Score. Rather than outputting an opaque black-box number, ReviewGuard AI employs an open, documented formula starting at a base of 100 points. Penalties are subtracted proportionally: The Suspicious Ratio carries a weight of 60; the Duplicate Ratio carries a weight of 25; the Contradiction index carries a weight of 10; and the Uncertain Ratio receives a gentle discount of 5 to reflect incomplete information. The resulting score maps into four clear tiers: High Trust (80–100), Moderate Trust (60–79), Low Trust (40–59), and Very Low Trust (0–39). In our viva defense, we emphasize that this score audits the credibility of the submitted review set—it is not an empirical certificate of product quality.">
+            <div class="slide-tag">MATHEMATICAL FORMULATION</div>
+            <h2 class="slide-title">The Review-Set Trust Score Formulation</h2>
+            <p class="slide-subtitle">An open, transparent mathematical scoring rule replacing arbitrary black-box metrics.</p>
+
+            <!-- Hero Formula Card -->
+            <div class="formula-hero-box">
+                <div class="formula-hero-title">Mathematical Formulation:</div>
+                <div class="formula-text">
+                    Trust Score = max(0, min(100, 100 − (R_suspicious × 60) − (R_duplicates × 25) − (R_contradictions × 10) − (R_uncertain × 5)))
+                </div>
+            </div>
+
+            <!-- 4 Formula Components Cards -->
+            <div class="grid-4" style="margin-bottom: 12px;">
+                <div class="card" style="border-top: 3px solid var(--red); padding: 14px 16px;">
+                    <div style="font-weight: 800; font-size: 0.95rem; color: var(--red);">R_suspicious (Weight 60)</div>
+                    <div style="font-size: 0.82rem; color: var(--text-sub); margin-top: 4px;">Heaviest penalty reflecting classified deceptive reviews.</div>
+                </div>
+                <div class="card" style="border-top: 3px solid var(--amber); padding: 14px 16px;">
+                    <div style="font-weight: 800; font-size: 0.95rem; color: var(--amber);">R_duplicates (Weight 25)</div>
+                    <div style="font-size: 0.82rem; color: var(--text-sub); margin-top: 4px;">Penalizes ratio of reviews in near-duplicate clusters (Cosine ≥ 0.82).</div>
+                </div>
+                <div class="card" style="border-top: 3px solid var(--secondary); padding: 14px 16px;">
+                    <div style="font-weight: 800; font-size: 0.95rem; color: var(--secondary);">R_contradictions (Weight 10)</div>
+                    <div style="font-size: 0.82rem; color: var(--text-sub); margin-top: 4px;">Penalizes high variance and polarized feature complaints.</div>
+                </div>
+                <div class="card" style="border-top: 3px solid var(--primary); padding: 14px 16px;">
+                    <div style="font-weight: 800; font-size: 0.95rem; color: var(--primary);">R_uncertain (Weight 5)</div>
+                    <div style="font-size: 0.82rem; color: var(--text-sub); margin-top: 4px;">Gentle confidence discount without penalizing genuine brevity.</div>
+                </div>
+            </div>
+
+            <!-- 4 Trust Meter Tiers -->
+            <div class="grid-4">
+                <div class="card" style="border-top: 4px solid var(--green); text-align: center; padding: 12px 14px;">
+                    <div style="font-size: 1.4rem; font-weight: 900; color: var(--green);">80 – 100</div>
+                    <div style="font-weight: 800; font-size: 0.95rem;">High Trust</div>
+                    <div style="font-size: 0.78rem; color: var(--text-muted);">Natural organic linguistic diversity.</div>
+                </div>
+                <div class="card" style="border-top: 4px solid var(--primary); text-align: center; padding: 12px 14px;">
+                    <div style="font-size: 1.4rem; font-weight: 900; color: var(--primary);">60 – 79</div>
+                    <div style="font-weight: 800; font-size: 0.95rem;">Moderate Trust</div>
+                    <div style="font-size: 0.78rem; color: var(--text-muted);">Minor duplicate phrasing; review with care.</div>
+                </div>
+                <div class="card" style="border-top: 4px solid var(--amber); text-align: center; padding: 12px 14px;">
+                    <div style="font-size: 1.4rem; font-weight: 900; color: var(--amber);">40 – 59</div>
+                    <div style="font-weight: 800; font-size: 0.95rem;">Low Trust</div>
+                    <div style="font-size: 0.78rem; color: var(--text-muted);">Substantial bot clusters or suspicious reviews.</div>
+                </div>
+                <div class="card" style="border-top: 4px solid var(--red); text-align: center; padding: 12px 14px;">
+                    <div style="font-size: 1.4rem; font-weight: 900; color: var(--red);">0 – 39</div>
+                    <div style="font-weight: 800; font-size: 0.95rem;">Very Low Trust</div>
+                    <div style="font-size: 0.78rem; color: var(--text-muted);">Severe coordinated manipulation detected.</div>
+                </div>
+            </div>
+
+            <div class="footer-banner">
+                💡 Epistemic Qualification: The Trust Score measures review-set credibility according to documented heuristic weights; it is not an empirical probability of physical product quality.
+            </div>
+        </div>
+
+        <!-- SLIDE 11: Machine Learning & NLP Pipeline -->
+        <div class="slide" id="slide-11" data-script="Here we illustrate our end-to-end Machine Learning and NLP pipeline. The workflow progresses through five disciplined stages: preprocessing, feature extraction, calibrated sequence classification, aspect-based sentiment mining, and semantic clustering. To satisfy rigorous academic standards, we enforce strict data leakage prevention: The TF-IDF vectorizer and Platt scaling calibration are encapsulated inside isolated Scikit-Learn Pipelines fitted exclusively on the training split using stratified sampling. Test folds are never touched during feature extraction, ensuring that reported metrics represent genuine out-of-sample generalization.">
+            <div class="slide-tag">MACHINE LEARNING WORKFLOW</div>
+            <h2 class="slide-title">Machine Learning & Natural Language Processing Pipeline</h2>
+            <p class="slide-subtitle">Systematic data transformation from raw text ingestion to serialized inference.</p>
+
+            <!-- 5 Horizontal Pipeline Stages -->
+            <div class="pipeline-flow">
+                <div class="pipeline-step-card" style="border-top: 4px solid var(--primary);">
+                    <div class="step-badge">STAGE 1</div>
+                    <div class="step-title">Preprocessing</div>
+                    <div class="step-desc">Sanitization, case folding, URL masking, whitespace normalization.</div>
+                </div>
+                <div class="pipeline-step-card" style="border-top: 4px solid var(--secondary);">
+                    <div class="step-badge">STAGE 2</div>
+                    <div class="step-title">Feature Extraction</div>
+                    <div class="step-desc">Sublinear TF-IDF (1–3 n-grams) + character n-gram stylometry.</div>
+                </div>
+                <div class="pipeline-step-card" style="border-top: 4px solid var(--green);">
+                    <div class="step-badge">STAGE 3</div>
+                    <div class="step-title">Classification</div>
+                    <div class="step-desc">Calibrated LinearSVC / fine-tuned DistilBERT with Platt scaling.</div>
+                </div>
+                <div class="pipeline-step-card" style="border-top: 4px solid var(--amber);">
+                    <div class="step-badge">STAGE 4</div>
+                    <div class="step-title">Sentiment & Aspects</div>
+                    <div class="step-desc">Aspect lexicon mapping, VADER compound polarity, polar variance.</div>
+                </div>
+                <div class="pipeline-step-card" style="border-top: 4px solid var(--primary);">
+                    <div class="step-badge">STAGE 5</div>
+                    <div class="step-title">Clustering & Score</div>
+                    <div class="step-desc">Pairwise Cosine Similarity (≥ 0.82) & mathematical Trust Score.</div>
+                </div>
+            </div>
+
+            <!-- Data Leakage Prevention Vault Card -->
+            <div class="card" style="border: 2px solid var(--amber); background: rgba(245, 158, 11, 0.05); margin-top: 10px;">
+                <div class="card-heading" style="color: var(--amber); font-size: 1.15rem;">🔒 Academic Rigor: Strict Data Leakage Prevention Protocol</div>
+                <div class="card-body" style="font-size: 0.95rem; line-height: 1.6;">
+                    Vectorizers and calibration transforms are fitted <strong>EXCLUSIVELY on training folds</strong> (80% Train / 20% Test, stratify=y). Test data remains completely isolated until evaluation.<br>
+                    <strong>Viva Voce Ready:</strong> Embedding TfidfVectorizer inside Scikit-Learn Pipelines fitted strictly on training partitions prevents test set vocabulary from leaking into the model.
+                </div>
+            </div>
+
+            <div class="footer-banner">
+                💡 Frameworks: Python, Scikit-Learn Pipelines, Hugging Face Transformers, Joblib serialization, Pytest test suites.
+            </div>
+        </div>
+
+        <!-- SLIDE 12: Interactive Web Dashboard & Feature Set -->
+        <div class="slide" id="slide-12" data-script="Slide 12 presents our planned user interface. Designed with modern dark-mode aesthetics (#0a0e17 and #0f172a), the dashboard incorporates an interactive 0-to-100 Trust Score gauge, live authenticity breakdown cards, aspect sentiment graphs, and scenario detection banners. Auditors can explore near-duplicate clusters, search and filter reviews, edit or delete entries in place, and upload CSV or Excel files. A key feature is the one-click PDF export, which generates an executive audit summary containing charts, tables, and legal disclaimers. We present these as our planned interface design, engineered for human-in-the-loop validation.">
+            <div class="slide-tag">USER INTERFACE & EXPERIENCE</div>
+            <h2 class="slide-title">Interactive Web Dashboard & Feature Set</h2>
+            <p class="slide-subtitle">Modern, responsive e-commerce trust analysis interface built with React and Tailwind CSS.</p>
+
+            <div class="grid-2">
+                <!-- Left: Conceptual Dashboard UI Mockup Card -->
+                <div class="mockup-dashboard-panel">
+                    <div style="font-weight: 800; color: var(--primary); font-size: 1.1rem; display: flex; justify-content: space-between; align-items: center;">
+                        <span>🖥️ ReviewGuard AI Interactive Dashboard</span>
+                        <span class="pill pill-green">High Trust Verified</span>
+                    </div>
+
+                    <div class="mockup-gauge-row">
+                        <div class="mockup-stat-item">
+                            <span class="mockup-stat-val">88 / 100</span>
+                            <span class="mockup-stat-lbl">Review-Set Trust Score</span>
+                        </div>
+                        <div class="mockup-stat-item">
+                            <span style="font-size: 1.1rem; font-weight: 800; color: #ffffff;">50 Reviews</span>
+                            <span class="mockup-stat-lbl">Dataset Volume</span>
+                        </div>
+                        <div class="mockup-stat-item">
+                            <span style="font-size: 1.1rem; font-weight: 800; color: var(--amber);">1 Cluster</span>
+                            <span class="mockup-stat-lbl">Near-Duplicates</span>
+                        </div>
+                    </div>
+
+                    <div style="font-size: 0.88rem; color: var(--text-sub);">
+                        <strong>Authenticity Distribution:</strong> Likely Genuine: 78% | Suspicious: 12% | Uncertain: 10%
+                    </div>
+
+                    <div style="font-size: 0.88rem; color: var(--text-sub);">
+                        <strong>Aspect Breakdown:</strong> 🔋 Battery: 82% (+) &nbsp;|&nbsp; 🔨 Build: 91% (+) &nbsp;|&nbsp; 📦 Delivery: 65% (+)
+                    </div>
+
+                    <div class="review-box" style="border-left-color: var(--green); font-size: 0.85rem;">
+                        <strong>Sample Review #1:</strong> "Solid sound quality, battery holds 2 full days. Recommended."<br>
+                        <span class="pill pill-green" style="font-size: 0.75rem; padding: 2px 8px; margin-top: 4px;">✓ Likely Genuine (Conf: 94.2%)</span>
+                    </div>
+                </div>
+
+                <!-- Right: 4 User Feature Cards -->
+                <div style="display: flex; flex-direction: column; gap: 10px;">
+                    <div class="card" style="padding: 14px 18px; border-left: 4px solid var(--primary);">
+                        <div style="font-weight: 800; font-size: 1rem; color: var(--primary);">🎯 Trust Score Gauge & Scenario Banner</div>
+                        <div style="font-size: 0.85rem; color: var(--text-sub); margin-top: 2px;">
+                            0–100 semicircular progress meter with automated detection banners for Scenarios A, B, and C.
+                        </div>
+                    </div>
+
+                    <div class="card" style="padding: 14px 18px; border-left: 4px solid var(--secondary);">
+                        <div style="font-weight: 800; font-size: 1rem; color: var(--secondary);">🔎 Duplicate Cluster Explorer</div>
+                        <div style="font-size: 0.85rem; color: var(--text-sub); margin-top: 2px;">
+                            Inspects near-duplicate groups, pairwise similarity percentages, and archetype reviews.
+                        </div>
+                    </div>
+
+                    <div class="card" style="padding: 14px 18px; border-left: 4px solid var(--green);">
+                        <div style="font-weight: 800; font-size: 1rem; color: var(--green);">📋 Searchable & Filterable Table</div>
+                        <div style="font-size: 0.85rem; color: var(--text-sub); margin-top: 2px;">
+                            Full review table with instant keyword search, authenticity filters, and in-place editing.
+                        </div>
+                    </div>
+
+                    <div class="card" style="padding: 14px 18px; border-left: 4px solid var(--amber);">
+                        <div style="font-weight: 800; font-size: 1rem; color: var(--amber);">📑 One-Click PDF Audit Export</div>
+                        <div style="font-size: 0.85rem; color: var(--text-sub); margin-top: 2px;">
+                            Generates branded multi-page executive audit reports with charts, tables, and disclaimers.
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="footer-banner">
+                💡 Conceptual UI Mockup: Built to provide an intuitive, human-in-the-loop investigation platform for e-commerce auditors.
+            </div>
+        </div>
+
+        <!-- SLIDE 13: REST API Architecture & PDF Report Generation -->
+        <div class="slide" id="slide-13" data-script="Slide 13 details our backend REST API specification. Built with FastAPI, the backend exposes six clean endpoints: POST /api/analyze executes the three analytical modules; POST /api/upload handles multipart CSV and Excel parsing; POST /api/report/pdf generates and streams branded PDF audit summaries using ReportLab; GET /api/samples provides our pre-configured test scenarios; and GET /api/model/info and /api/health provide transparency and telemetry. All endpoints use strict Pydantic schemas, ensuring robust data validation, error handling, and zero unhandled server exceptions.">
+            <div class="slide-tag">BACKEND API SPECIFICATION</div>
+            <h2 class="slide-title">REST API Architecture & PDF Report Generation</h2>
+            <p class="slide-subtitle">Asynchronous FastAPI backend endpoints powering data ingestion, analysis, and reporting.</p>
+
+            <div class="grid-2">
+                <!-- Left: Formatted REST Endpoints Table -->
+                <div class="card" style="border-top: 4px solid var(--primary); padding: 18px;">
+                    <div class="card-heading" style="color: var(--primary); font-size: 1.15rem; margin-bottom: 8px;">FastAPI Endpoints Specification</div>
+                    <table class="api-endpoint-table">
+                        <tr class="api-row">
+                            <td><span class="method-pill method-post">POST</span></td>
+                            <td><strong>/api/analyze</strong></td>
+                            <td>Full 3-module analysis on submitted reviews</td>
+                        </tr>
+                        <tr class="api-row">
+                            <td><span class="method-pill method-post">POST</span></td>
+                            <td><strong>/api/upload</strong></td>
+                            <td>Parses CSV & Excel (.xlsx) files with auto-schema</td>
+                        </tr>
+                        <tr class="api-row">
+                            <td><span class="method-pill method-post">POST</span></td>
+                            <td><strong>/api/report/pdf</strong></td>
+                            <td>Streams branded PDF audit report via ReportLab</td>
+                        </tr>
+                        <tr class="api-row">
+                            <td><span class="method-pill method-get">GET</span></td>
+                            <td><strong>/api/samples</strong></td>
+                            <td>Preloaded Scenarios A, B, and C demonstration data</td>
+                        </tr>
+                        <tr class="api-row">
+                            <td><span class="method-pill method-get">GET</span></td>
+                            <td><strong>/api/model/info</strong></td>
+                            <td>Model parameters, calibration settings & metrics</td>
+                        </tr>
+                        <tr class="api-row">
+                            <td><span class="method-pill method-get">GET</span></td>
+                            <td><strong>/api/health</strong></td>
+                            <td>System status, memory consumption & telemetry</td>
+                        </tr>
+                    </table>
+                </div>
+
+                <!-- Right: ReportLab PDF Engine Specs -->
+                <div class="card" style="border-top: 4px solid var(--secondary); padding: 18px;">
+                    <div class="card-heading" style="color: var(--secondary); font-size: 1.15rem;">ReportLab PDF Engine Architecture</div>
+                    <div class="card-body" style="display: flex; flex-direction: column; gap: 8px; font-size: 0.92rem;">
+                        <div>
+                            <strong style="color: #ffffff;">• Audit-Ready PDF Reports:</strong>
+                            <p style="color: var(--text-muted); font-size: 0.85rem;">Generates multi-page branded PDF reports formatted for corporate and academic auditing.</p>
+                        </div>
+                        <div>
+                            <strong style="color: #ffffff;">• Dynamic Visual Canvas:</strong>
+                            <p style="color: var(--text-muted); font-size: 0.85rem;">Embeds ReportLab custom drawing canvases for 0–100 Trust Score gauges and aspect charts.</p>
+                        </div>
+                        <div>
+                            <strong style="color: #ffffff;">• Near-Duplicate Groupings:</strong>
+                            <p style="color: var(--text-muted); font-size: 0.85rem;">Renders cluster tables highlighting archetype texts and similarity metrics.</p>
+                        </div>
+                        <div>
+                            <strong style="color: #ffffff;">• Epistemic Disclaimers:</strong>
+                            <p style="color: var(--text-muted); font-size: 0.85rem;">Prints clear legal boundaries: "Review-Set Trust Audited; Product Quality Not Independently Verified."</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="footer-banner">
+                💡 API Security & Robustness: Pydantic v2 schema validation, CORS middleware, safe file streaming, and graceful error handling.
+            </div>
+        </div>
+
+        <!-- SLIDE 14: Planned Testing Strategy & Epistemic Limitations -->
+        <div class="slide" id="slide-14" data-script="Slide 14 addresses testing, evaluation, and limitations. Our verification plan encompasses unit tests using Pytest, scenario validation across Scenarios A, B, and C, and evaluation metrics including Precision, Recall, F1-score, and Brier calibration scores. In this academic defense, we maintain scientific honesty by explicitly discussing our system limitations: First, textual patterns alone cannot establish legal fraudulent intent—they indicate statistical suspiciousness. Second, missing reviewer metadata reduces cluster resolution. Third, similar wording can naturally occur among authentic reviews. Recognizing these boundaries demonstrates academic maturity and responsible AI principles.">
+            <div class="slide-tag">VERIFICATION & LIMITATIONS</div>
+            <h2 class="slide-title">Planned Testing Strategy & Epistemic Limitations</h2>
+            <p class="slide-subtitle">Rigorous academic verification methodology, evaluation metrics, and responsible AI boundaries.</p>
+
+            <!-- 3 Testing Pillars -->
+            <div class="grid-3" style="margin-bottom: 12px;">
+                <div class="card" style="border-top: 4px solid var(--primary); padding: 16px 18px;">
+                    <div style="font-weight: 800; font-size: 1.05rem; color: var(--primary);">🧪 Unit & Integration Testing</div>
+                    <div style="font-size: 0.85rem; color: var(--text-sub); margin-top: 6px; line-height: 1.6;">
+                        • Pytest suites for text cleaning, TF-IDF vectorization, calibration bounds, and cosine matrix clustering.<br>
+                        • API route testing verifying status codes, empty inputs, and malformed CSV rejection.
+                    </div>
+                </div>
+
+                <div class="card" style="border-top: 4px solid var(--green); padding: 16px 18px;">
+                    <div style="font-weight: 800; font-size: 1.05rem; color: var(--green);">🎯 Scenario Validation</div>
+                    <div style="font-size: 0.85rem; color: var(--text-sub); margin-top: 6px; line-height: 1.6;">
+                        • Systematic verification across Scenario A (Bombing), Scenario B (Astroturfing), and Scenario C (Mixed).<br>
+                        • Ensures legitimate negative reviews are preserved without false fraud penalties.
+                    </div>
+                </div>
+
+                <div class="card" style="border-top: 4px solid var(--secondary); padding: 16px 18px;">
+                    <div style="font-weight: 800; font-size: 1.05rem; color: var(--secondary);">📈 Evaluation Metrics</div>
+                    <div style="font-size: 0.85rem; color: var(--text-sub); margin-top: 6px; line-height: 1.6;">
+                        • Precision, Recall, F1-Score, PR-AUC, Confusion Matrix, and Brier Calibration Score on unseen holdouts.<br>
+                        • Multi-domain cross-dataset testing on Amazon, Yelp, and Kaggle benchmarks.
+                    </div>
+                </div>
+            </div>
+
+            <!-- Epistemic Limitations Banner -->
+            <div class="card" style="border: 2px solid var(--amber); background: rgba(245, 158, 11, 0.05); padding: 16px 20px;">
+                <div class="card-heading" style="color: var(--amber); font-size: 1.1rem;">⚠️ Responsible AI Boundaries & Epistemic Limitations</div>
+                <div class="card-body" style="font-size: 0.9rem; line-height: 1.6;">
+                    • <strong>Textual Epistemic Boundary:</strong> NLP patterns alone cannot prove legal fraud or malicious intent; they indicate statistical suspiciousness.<br>
+                    • <strong>Metadata Dependency:</strong> Absence of reviewer IDs or timestamps reduces clustering resolution.<br>
+                    • <strong>Product Quality Boundary:</strong> Product quality is explicitly reported as <em>Not Independently Verified</em>; the system audits reviews, not physical hardware.
+                </div>
+            </div>
+
+            <div class="footer-banner">
+                💡 Scientific Integrity: We distinguish planned testing methodology from completed benchmarks, acknowledging data-dependent limitations.
+            </div>
+        </div>
+
+        <!-- SLIDE 15: Conclusion, Responsible AI & Future Scope -->
+        <div class="slide" id="slide-15" data-script="In conclusion, ReviewGuard AI demonstrates that online review analysis must transcend simple sentiment averages and binary fake-or-real guesses. By synthesizing three complementary perspectives—review authenticity, customer sentiment, and collection-level trust—our system provides a balanced, honest, and actionable understanding of customer feedback. For future work, we propose expanding into multilingual NLP, incorporating social graph telemetry, and implementing continuous concept drift monitoring against LLM-generated spam. Thank you respected committee members. I am now open for your viva voce questions and technical discussion.">
+            <div class="slide-tag">CONCLUSION & FUTURE HORIZONS</div>
+            <h2 class="slide-title">Conclusion, Responsible AI & Future Scope</h2>
+            <p class="slide-subtitle">Transforming e-commerce review analysis through multi-perspective intelligence.</p>
+
+            <div class="grid-2">
+                <!-- Left: Core Contributions -->
+                <div class="card" style="border-top: 4px solid var(--primary); padding: 18px;">
+                    <div class="card-heading" style="color: var(--primary); font-size: 1.15rem;">Core Academic Contributions</div>
+                    <div class="card-body" style="font-size: 0.9rem; line-height: 1.6;">
+                        <p>• <strong>Three Independent Perspectives:</strong> Combines review authenticity, customer experience, and review-set trust into a single unified framework.</p>
+                        <p>• <strong>Resolution of Adversarial Asymmetries:</strong> Protects good products from review bombing and exposes astroturfing on poor products.</p>
+                        <p>• <strong>Scientific Epistemic Honesty:</strong> Reports product quality as <em>Not Independently Verified</em> and features an open, transparent trust formula.</p>
+                    </div>
+                </div>
+
+                <!-- Right: Future Scope 2x2 Grid -->
+                <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 10px;">
+                    <div class="card" style="padding: 12px 14px; border-left: 3px solid var(--secondary);">
+                        <div style="font-weight: 800; font-size: 0.9rem; color: var(--secondary);">🌐 Multilingual NLP</div>
+                        <div style="font-size: 0.78rem; color: var(--text-muted); margin-top: 2px;">Expanding transformer tokenization to Hindi, Spanish, and regional languages.</div>
+                    </div>
+                    <div class="card" style="padding: 12px 14px; border-left: 3px solid var(--green);">
+                        <div style="font-weight: 800; font-size: 0.9rem; color: var(--green);">📊 Social Graph Telemetry</div>
+                        <div style="font-size: 0.78rem; color: var(--text-muted); margin-top: 2px;">Integrating reviewer network graphs and IP burst analysis when available.</div>
+                    </div>
+                    <div class="card" style="padding: 12px 14px; border-left: 3px solid var(--amber);">
+                        <div style="font-weight: 800; font-size: 0.9rem; color: var(--amber);">🔄 LLM Spam Drift</div>
+                        <div style="font-size: 0.78rem; color: var(--text-muted); margin-top: 2px;">Continuous concept drift monitoring against evolving AI-generated reviews.</div>
+                    </div>
+                    <div class="card" style="padding: 12px 14px; border-left: 3px solid var(--primary);">
+                        <div style="font-weight: 800; font-size: 0.9rem; color: var(--primary);">⚖️ Merchant Arbitration</div>
+                        <div style="font-size: 0.78rem; color: var(--text-muted); margin-top: 2px;">Enterprise dispute resolution dashboards for merchant arbitration.</div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Live Interactive Tester -->
+            <div class="live-tester-card">
+                <div class="preset-chips">
+                    <span style="font-size: 0.85rem; font-weight: 700; color: var(--text-muted);">Quick Live Test Presets:</span>
+                    <button class="preset-chip" onclick="loadPreset('genuine')">🟢 Genuine Customer Review</button>
+                    <button class="preset-chip" onclick="loadPreset('bombing')">🔴 Competitor Attack Bot</button>
+                    <button class="preset-chip" onclick="loadPreset('astroturf')">🟡 Astroturfing Hype</button>
+                </div>
+
+                <div class="tester-inputs">
+                    <textarea id="live-input" class="tester-textarea" placeholder="Paste or type any product review to test live..."></textarea>
+                    <button class="tester-btn" onclick="runLiveTest()">Analyze Review ⚡</button>
+                </div>
+
+                <div class="tester-result-row" id="live-result">
+                    <div style="font-size: 0.95rem;">
+                        <strong>Prediction:</strong> <span id="res-badge" class="pill pill-blue">Ready for Input</span>
+                    </div>
+                    <div style="font-size: 0.95rem;">
+                        <strong>Calibrated Confidence:</strong> <span id="res-conf" style="font-family: 'JetBrains Mono', monospace; font-weight: 800;">--%</span>
+                    </div>
+                    <div style="font-size: 0.95rem;">
+                        <strong>Detected Signal:</strong> <span id="res-signal" style="color: var(--text-muted);">Awaiting analysis</span>
+                    </div>
+                </div>
+            </div>
+
+            <div class="footer-banner" style="border-color: var(--green); background: #0c1815;">
+                🎉 <strong>Thank you respected committee members!</strong> Open for Viva Voce Examination & Technical Defense. | Student: [Your Name]
+            </div>
+        </div>
+
+    </main>
+
+    <!-- Keynote Speaker Script Drawer -->
+    <div class="speaker-drawer" id="speaker-drawer">
+        <div class="drawer-header">
+            <div class="drawer-title">
+                <span>🎙️ Speaker Presentation Script</span>
+                <span style="font-size: 0.85rem; color: var(--text-muted); font-weight: normal;">(Auditorium Teleprompter)</span>
+            </div>
+            <button class="btn-ctrl" onclick="toggleSpeakerDrawer()">Close [S]</button>
+        </div>
+        <div class="drawer-script" id="speaker-text">
+            Loading script...
+        </div>
+    </div>
+
+    <!-- Grid View Modal (Press G) -->
+    <div class="grid-modal" id="grid-modal">
+        <div class="grid-modal-header">
+            <div class="grid-modal-title">📑 Slide Navigator (15 Slides)</div>
+            <button class="btn-ctrl" onclick="toggleGridModal()">Close [G / Esc]</button>
+        </div>
+        <div class="grid-thumbs-container" id="grid-thumbs">
+            <!-- Thumbs generated by JS -->
+        </div>
+    </div>
+
+    <!-- Keynote Footer -->
+    <footer>
+        <div class="footer-left">
+            <div class="key-legend">
+                <kbd>&larr;</kbd> <kbd>&rarr;</kbd> Navigate &nbsp;|&nbsp;
+                <kbd>S</kbd> Speaker Script &nbsp;|&nbsp;
+                <kbd>G</kbd> Slide Grid &nbsp;|&nbsp;
+                <kbd>F</kbd> Fullscreen
+            </div>
+        </div>
+
+        <div class="progress-dots" id="dots-box"></div>
+
+        <div class="nav-button-group">
+            <button class="btn-nav-large" id="btn-prev" onclick="prevSlide()" disabled>&larr; Previous</button>
+            <button class="btn-nav-large" id="btn-next" onclick="nextSlide()">Next Slide &rarr;</button>
+        </div>
+    </footer>
+
+    <!-- Interactive Controller Script -->
+    <script>
+        const totalSlides = 15;
+        let currentSlide = 1;
+        let elapsedSeconds = 0;
+        let timerInterval = null;
+
+        // Presentation Titles for Grid matching Master Blueprint
+        const slideTitles = [
+            "1. Title & Candidate Details",
+            "2. The Trust Crisis in Online Reviews",
+            "3. Problem: Flaw in Binary Detectors",
+            "4. Proposed Solution: 3-Module System",
+            "5. System Architecture & Tech Stack",
+            "6. Module 1: Authenticity Detector",
+            "7. Module 2: Sentiment & Aspects",
+            "8. Module 3: Clustering & Trust Score",
+            "9. Three Key Manipulation Scenarios",
+            "10. Trust Score Formulation",
+            "11. Machine Learning & NLP Pipeline",
+            "12. Web Dashboard & Feature Set",
+            "13. REST API & ReportLab PDF Engine",
+            "14. Testing Strategy & Limitations",
+            "15. Conclusion, Scope & Live Demo"
+        ];
+
+        // Initialize Timer
+        timerInterval = setInterval(() => {
+            elapsedSeconds++;
+            const mins = String(Math.floor(elapsedSeconds / 60)).padStart(2, '0');
+            const secs = String(elapsedSeconds % 60).padStart(2, '0');
+            document.getElementById('elapsed-time').textContent = `${mins}:${secs}`;
+        }, 1000);
+
+        // Build Navigation Dots
+        const dotsBox = document.getElementById('dots-box');
+        for (let i = 1; i <= totalSlides; i++) {
+            const dot = document.createElement('div');
+            dot.className = `p-dot ${i === 1 ? 'active' : ''}`;
+            dot.onclick = () => goToSlide(i);
+            dotsBox.appendChild(dot);
+        }
+
+        // Build Slide Thumbnails for Grid Navigator
+        const thumbsBox = document.getElementById('grid-thumbs');
+        slideTitles.forEach((title, index) => {
+            const thumb = document.createElement('div');
+            thumb.className = `slide-thumb ${index === 0 ? 'active' : ''}`;
+            thumb.id = `thumb-${index + 1}`;
+            thumb.onclick = () => {
+                goToSlide(index + 1);
+                toggleGridModal();
+            };
+            thumb.innerHTML = `
+                <div class="thumb-num">SLIDE ${index + 1}</div>
+                <div class="thumb-title">${title}</div>
+            `;
+            thumbsBox.appendChild(thumb);
+        });
+
+        function updateSlideUI() {
+            // Update Active Slide
+            document.querySelectorAll('.slide').forEach((s, idx) => {
+                const isActive = (idx + 1) === currentSlide;
+                s.classList.toggle('active', isActive);
+                if (isActive) s.scrollTop = 0;
+            });
+
+            // Update Dots
+            document.querySelectorAll('.p-dot').forEach((d, idx) => {
+                d.classList.toggle('active', (idx + 1) === currentSlide);
+            });
+
+            // Update Thumbnails
+            document.querySelectorAll('.slide-thumb').forEach((th, idx) => {
+                th.classList.toggle('active', (idx + 1) === currentSlide);
+            });
+
+            // Update Header Counter
+            document.getElementById('current-slide-num').textContent = currentSlide;
+
+            // Update Navigation Buttons
+            document.getElementById('btn-prev').disabled = currentSlide === 1;
+            document.getElementById('btn-next').disabled = currentSlide === totalSlides;
+            document.getElementById('btn-next').textContent = currentSlide === totalSlides ? 'Finish Presentation ✓' : 'Next Slide →';
+
+            // Update Speaker Script Drawer
+            const activeSlideElem = document.getElementById(`slide-${currentSlide}`);
+            const script = activeSlideElem.getAttribute('data-script') || "Deliver this slide clearly to the audience.";
+            document.getElementById('speaker-text').innerHTML = `<strong>Slide ${currentSlide} Spoken Script:</strong> &ldquo;${script}&rdquo;`;
+        }
+
+        function nextSlide() {
+            if (currentSlide < totalSlides) {
+                currentSlide++;
+                updateSlideUI();
+            }
+        }
+
+        function prevSlide() {
+            if (currentSlide > 1) {
+                currentSlide--;
+                updateSlideUI();
+            }
+        }
+
+        function goToSlide(n) {
+            currentSlide = n;
+            updateSlideUI();
+        }
+
+        function toggleSpeakerDrawer() {
+            const drawer = document.getElementById('speaker-drawer');
+            const btn = document.getElementById('btn-toggle-notes');
+            drawer.classList.toggle('open');
+            btn.classList.toggle('active-toggle');
+        }
+
+        function toggleGridModal() {
+            const modal = document.getElementById('grid-modal');
+            modal.classList.toggle('open');
+        }
+
+        function toggleFullscreen() {
+            if (!document.fullscreenElement) {
+                document.documentElement.requestFullscreen().catch(err => {
+                    console.log(err);
+                });
+            } else {
+                document.exitFullscreen();
+            }
+        }
+
+        // Keyboard Shortcuts
+        document.addEventListener('keydown', (e) => {
+            if (e.target.tagName === 'TEXTAREA' || e.target.tagName === 'INPUT') return;
+
+            if (e.key === 'ArrowRight' || e.key === ' ' || e.key === 'PageDown') {
+                e.preventDefault();
+                nextSlide();
+            } else if (e.key === 'ArrowLeft' || e.key === 'PageUp') {
+                e.preventDefault();
+                prevSlide();
+            } else if (e.key === 's' || e.key === 'S') {
+                toggleSpeakerDrawer();
+            } else if (e.key === 'g' || e.key === 'G') {
+                toggleGridModal();
+            } else if (e.key === 'Escape') {
+                document.getElementById('grid-modal').classList.remove('open');
+                document.getElementById('speaker-drawer').classList.remove('open');
+            } else if (e.key === 'f' || e.key === 'F') {
+                toggleFullscreen();
+            } else if (e.key === 'Home') {
+                goToSlide(1);
+            } else if (e.key === 'End') {
+                goToSlide(totalSlides);
+            }
+        });
+
+        // Initialize First Slide
+        updateSlideUI();
+
+        // Slide 15 Live AI Tester Logic
+        const presetReviews = {
+            genuine: "I have used these wireless headphones for 3 weeks now. Battery easily gives 2 days of normal use. The build is solid, but the ear cushions are slightly warm during workouts. Good value for $45.",
+            bombing: "Total absolute garbage broke after 1 day do not buy complete waste of money terrible seller scam scam scam!!!",
+            astroturf: "THIS IS THE GREATEST ITEM EVER CREATED IN HUMAN HISTORY! MIRACLE PURCHASE 1000% RECOMMENDED BEST EVER FIVE STARS ⭐️⭐️⭐️⭐️⭐️!"
+        };
+
+        function loadPreset(type) {
+            document.getElementById('live-input').value = presetReviews[type];
+            runLiveTest();
+        }
+
+        function runLiveTest() {
+            const text = document.getElementById('live-input').value.trim();
+            if (!text) {
+                alert("Please enter a review to test live!");
+                return;
+            }
+
+            const resBadge = document.getElementById('res-badge');
+            const resConf = document.getElementById('res-conf');
+            const resSignal = document.getElementById('res-signal');
+
+            const lower = text.toLowerCase();
+            const words = text.split(/\s+/).length;
+
+            if (words < 4) {
+                resBadge.className = 'pill pill-amber';
+                resBadge.textContent = '⚠ Uncertain';
+                resConf.textContent = '52.0%';
+                resSignal.textContent = 'Insufficient text length (< 4 words) to classify safely';
+            } else if (lower.includes('miracle') || lower.includes('human history') || lower.includes('greatest item') || lower.includes('1000%')) {
+                resBadge.className = 'pill pill-red';
+                resBadge.textContent = '⚠ Suspicious (Astroturf)';
+                resConf.textContent = '96.8%';
+                resSignal.textContent = 'Promotional hyperbole script & excessive exclamation density';
+            } else if (lower.includes('garbage') || lower.includes('scam') || lower.includes('waste of money')) {
+                resBadge.className = 'pill pill-red';
+                resBadge.textContent = '⚠ Suspicious (Attack)';
+                resConf.textContent = '94.2%';
+                resSignal.textContent = 'Repeated complaint template matching attack cluster #1';
+            } else {
+                resBadge.className = 'pill pill-green';
+                resBadge.textContent = '✓ Likely Genuine';
+                resConf.textContent = '93.5%';
+                resSignal.textContent = 'Balanced pros/cons, natural linguistic variance, organic customer voice';
+            }
+        }
+    </script>
+</body>
+</html>

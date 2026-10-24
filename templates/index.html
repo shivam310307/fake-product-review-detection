@@ -1,0 +1,172 @@
+{% extends "base.html" %}
+
+{% block title %}ReviewGuard AI — Advanced Fake Review Detection & Trust Analysis{% endblock %}
+
+{% block content %}
+<div class="landing-container">
+    <!-- Hero Section -->
+    <section class="hero-section">
+        <div class="hero-badge">IEEE Final Year Project Demonstration</div>
+        <h1 class="hero-title">
+            Advanced Fake Product Review Detection Using <span class="gradient-text">Machine Learning</span>
+        </h1>
+        <p class="hero-subtitle">
+            An intelligent natural language processing system decoupling product sentiment from review authenticity. 
+            Powered by TF-IDF n-gram vectorization, Decision Tree Classifier, and AdaBoost Ensemble Learning.
+        </p>
+
+        <div class="hero-actions">
+            <a href="{{ url_for('dashboard') }}" class="btn btn-primary btn-lg">
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="7" height="7"></rect><rect x="14" y="3" width="7" height="7"></rect><rect x="14" y="14" width="7" height="7"></rect><rect x="3" y="14" width="7" height="7"></rect></svg>
+                Open Analytics Dashboard
+            </a>
+            <a href="{{ url_for('predict') }}" class="btn btn-outline btn-lg">
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"></path><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"></path></svg>
+                Analyze Review
+            </a>
+            <a href="{{ url_for('performance') }}" class="btn btn-outline btn-lg">
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="18" y1="20" x2="18" y2="10"></line><line x1="12" y1="20" x2="12" y2="4"></line><line x1="6" y1="20" x2="6" y2="14"></line></svg>
+                Model Benchmarks
+            </a>
+        </div>
+
+        <div class="stats-ribbon">
+            <div class="ribbon-item">
+                <span class="ribbon-num">2</span>
+                <span class="ribbon-lbl">Core Algorithms</span>
+            </div>
+            <div class="ribbon-divider"></div>
+            <div class="ribbon-item">
+                <span class="ribbon-num">5,000+</span>
+                <span class="ribbon-lbl">TF-IDF Features</span>
+            </div>
+            <div class="ribbon-divider"></div>
+            <div class="ribbon-item">
+                <span class="ribbon-num">80 / 20</span>
+                <span class="ribbon-lbl">Stratified Split</span>
+            </div>
+            <div class="ribbon-divider"></div>
+            <div class="ribbon-item">
+                <span class="ribbon-num">100%</span>
+                <span class="ribbon-lbl">Reproducible ML</span>
+            </div>
+        </div>
+    </section>
+
+    <!-- Core Academic Problem & Objectives -->
+    <section class="info-section">
+        <div class="section-header">
+            <h2>The Core Machine Learning Challenge</h2>
+            <p>Traditional e-commerce platforms confound customer sentiment with review authenticity.</p>
+        </div>
+
+        <div class="cards-grid">
+            <div class="info-card">
+                <div class="card-icon warning-icon">
+                    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"></circle><line x1="12" y1="8" x2="12" y2="12"></line><line x1="12" y1="16" x2="12.01" y2="16"></line></svg>
+                </div>
+                <h3>The Fallacy of Sentiment</h3>
+                <p>
+                    A positive review is not automatically genuine, and a negative review is not automatically fake. 
+                    Unethical competitors launch fake negative smear attacks on good products, while dubious vendors purchase fake 5-star praise.
+                </p>
+            </div>
+
+            <div class="info-card">
+                <div class="card-icon success-icon">
+                    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"></path><polyline points="22 4 12 14.01 9 11.01"></polyline></svg>
+                </div>
+                <h3>Stylometric & Linguistic Signatures</h3>
+                <p>
+                    Computer-generated and incentivized reviews exhibit distinct lexical distributions: inflated hyperbolic adjectives, 
+                    repetitive vocabulary, abnormal punctuation, and altered syntactic depth compared to real buyers.
+                </p>
+            </div>
+
+            <div class="info-card">
+                <div class="card-icon info-icon">
+                    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"></polygon></svg>
+                </div>
+                <h3>Epistemic Limitations</h3>
+                <p>
+                    ReviewGuard AI adheres to responsible AI principles: review text alone cannot definitively prove product quality. 
+                    Predictions reflect linguistic authenticity probabilities with clear uncertainty thresholds.
+                </p>
+            </div>
+        </div>
+    </section>
+
+    <!-- Algorithms in the Pipeline -->
+    <section class="algorithms-section">
+        <div class="section-header">
+            <h2>Comparative Machine Learning Architecture</h2>
+            <p>Benchmarked across standard evaluation metrics: Accuracy, Precision, Recall, and F1-Score.</p>
+        </div>
+
+        <div class="algo-comparison-grid">
+            <!-- Decision Tree Card -->
+            <div class="algo-card">
+                <div class="algo-badge">Base Classifier</div>
+                <h3>Decision Tree Classifier</h3>
+                <p class="algo-desc">
+                    Constructs an interpretable binary tree using recursive feature splitting. Splitting criteria (Gini Impurity / Information Gain) 
+                    isolate characteristic word presence across review types.
+                </p>
+                <ul class="algo-features">
+                    <li><strong>Interpretability:</strong> Highly transparent decision rules</li>
+                    <li><strong>Splitting:</strong> Gini Impurity with max depth regularization</li>
+                    <li><strong>Inference Latency:</strong> Sub-millisecond execution</li>
+                    <li><strong>Feature Importance:</strong> Direct Gini importance metrics</li>
+                </ul>
+            </div>
+
+            <!-- AdaBoost Card -->
+            <div class="algo-card highlight-card">
+                <div class="algo-badge featured-badge">Ensemble Classifier</div>
+                <h3>AdaBoost Classifier</h3>
+                <p class="algo-desc">
+                    Adaptive Boosting algorithm iteratively trains an ensemble of weak base decision stumps. 
+                    Misclassified samples from earlier rounds receive higher weights, focusing subsequent learners on subtle linguistic deception.
+                </p>
+                <ul class="algo-features">
+                    <li><strong>Ensemble Method:</strong> Sequential adaptive boosting (SAMME)</li>
+                    <li><strong>Base Estimator:</strong> Regularized Decision Trees</li>
+                    <li><strong>Robustness:</strong> Significantly reduced variance & overfitting</li>
+                    <li><strong>Calibration:</strong> Calibrated probability estimates for confidence scoring</li>
+                </ul>
+            </div>
+        </div>
+    </section>
+
+    <!-- System Workflow Architecture -->
+    <section class="workflow-section">
+        <div class="section-header">
+            <h2>End-to-End System Pipeline</h2>
+            <p>From raw unstructured customer feedback to actionable trust intelligence.</p>
+        </div>
+
+        <div class="pipeline-steps">
+            <div class="step-card">
+                <span class="step-num">01</span>
+                <h4>Text Ingestion & Cleaning</h4>
+                <p>HTML strip, regex normalization, lowercase transformation, and punctuation handling.</p>
+            </div>
+            <div class="step-card">
+                <span class="step-num">02</span>
+                <h4>TF-IDF Vectorization</h4>
+                <p>Sublinear term frequency scaling across unigrams and bigrams (1-2 n-grams).</p>
+            </div>
+            <div class="step-card">
+                <span class="step-num">03</span>
+                <h4>Model Inference</h4>
+                <p>Decision Tree or AdaBoost pipeline execution with class probability calculation.</p>
+            </div>
+            <div class="step-card">
+                <span class="step-num">04</span>
+                <h4>Trust Metric & Audit</h4>
+                <p>Calibrated confidence score, key signal extraction, SQLite logging, and PDF report export.</p>
+            </div>
+        </div>
+    </section>
+</div>
+{% endblock %}

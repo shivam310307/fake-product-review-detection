@@ -1,0 +1,148 @@
+{% extends "base.html" %}
+
+{% block title %}Live Product URL Analysis — ReviewGuard AI{% endblock %}
+
+{% block content %}
+<div class="content-container">
+    <div class="page-header">
+        <div>
+            <h1 class="page-title">Live E-Commerce URL Review Scanner</h1>
+            <p class="page-desc">Extract reviews from web product pages and batch-classify review authenticity with SSRF protection.</p>
+        </div>
+        <div class="header-actions">
+            {% if session.get('latest_url_analysis') %}
+            <a href="{{ url_for('download_live_analysis_pdf') }}" class="btn btn-outline">
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path><polyline points="14 2 14 8 20 8"></polyline><path d="M12 18v-6"></path><path d="M9 15l3 3 3-3"></path></svg>
+                Download Last URL Audit PDF
+            </a>
+            {% endif %}
+        </div>
+    </div>
+
+    <div class="grid-2col">
+        <!-- Live URL Form Card -->
+        <div class="card">
+            <div class="card-header">
+                <h3>Scan Product Page</h3>
+                <p>Provide a public product page URL (Flipkart, Amazon, Walmart, etc.) or select a built-in demo preset.</p>
+            </div>
+
+            <!-- Demo Preset Buttons -->
+            <div class="sample-chips-row mb-3">
+                <span class="chips-title">Built-In Demo Presets:</span>
+                <button type="button" class="chip-btn" id="btn-demo-flipkart">
+                    <span class="chip-dot dot-warning"></span> 🛒 Flipkart Electronics
+                </button>
+                <button type="button" class="chip-btn" id="btn-demo-amazon">
+                    <span class="chip-dot dot-info"></span> 📦 Amazon Tech Item
+                </button>
+                <button type="button" class="chip-btn" id="btn-demo-books">
+                    <span class="chip-dot dot-genuine"></span> 📚 Books.toScrape (Live)
+                </button>
+                <button type="button" class="chip-btn" id="btn-demo-local">
+                    <span class="chip-dot dot-info"></span> 💻 Offline Store Engine
+                </button>
+            </div>
+
+            <form method="POST" action="{{ url_for('live_prediction') }}" id="live-scan-form">
+                <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+
+                <div class="form-group">
+                    <label for="product_url" class="form-label">Product Page URL</label>
+                    <div class="input-icon-wrapper">
+                        <svg class="input-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"></circle><line x1="2" y1="12" x2="22" y2="12"></line><path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"></path></svg>
+                        <input 
+                            type="url" 
+                            id="product_url" 
+                            name="product_url" 
+                            class="form-control" 
+                            placeholder="https://dl.flipkart.com/dl/item/p/product?pid=CPRHYYHESYZU3J8Y or Amazon / public URL" 
+                            required
+                        >
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label for="model_choice" class="form-label">Batch Classification Model</label>
+                    <select id="model_choice" name="model_choice" class="form-control">
+                        <option value="adaboost" selected>AdaBoost Classifier (High Sensitivity)</option>
+                        <option value="decision_tree">Decision Tree Classifier (Fast Baseline)</option>
+                    </select>
+                </div>
+
+                <div class="form-actions mt-4">
+                    <button type="submit" class="btn btn-primary btn-block btn-lg" id="scan-submit-btn">
+                        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polygon points="5 3 19 12 5 21 5 3"></polygon></svg>
+                        Extract & Analyze Product Reviews
+                    </button>
+                    <div id="scan-spinner" class="training-spinner-wrapper" style="display: none;">
+                        <div class="spinner"></div>
+                        <span>Ingesting review batch and computing Trust Score...</span>
+                    </div>
+                </div>
+            </form>
+        </div>
+
+        <!-- Security Guardrails Card -->
+        <div class="card">
+            <div class="card-header">
+                <h3>SSRF Defense & Extraction Architecture</h3>
+                <p>Enterprise security guardrails preventing Server-Side Request Forgery.</p>
+            </div>
+
+            <div class="guidance-list">
+                <div class="guidance-item">
+                    <div class="guidance-num">🛡️</div>
+                    <div class="guidance-body">
+                        <strong>Private Network Rejection</strong>
+                        <p>All loopback addresses (<code>127.0.0.1</code>, <code>localhost</code>), RFC 1918 private subnets (<code>10.0.0.0/8</code>, <code>192.168.0.0/16</code>), and AWS/GCP cloud metadata endpoints (<code>169.254.169.254</code>) are blocked before request dispatch.</p>
+                    </div>
+                </div>
+
+                <div class="guidance-item">
+                    <div class="guidance-num">⏱️</div>
+                    <div class="guidance-body">
+                        <strong>Timeout & Payload Caps</strong>
+                        <p>Requests are strictly capped at 5 seconds timeout with a 2 MB maximum response size to eliminate ReDoS or buffer exhaustion attacks.</p>
+                    </div>
+                </div>
+
+                <div class="guidance-item">
+                    <div class="guidance-num">🌐</div>
+                    <div class="guidance-body">
+                        <strong>Open E-Commerce & Adaptive Ingestion</strong>
+                        <p>Directly accepts public e-commerce links (Flipkart, Amazon, Walmart, Books.toScrape, and general product stores). When commercial anti-bot challenges or client-side JavaScript shields block static HTML, the system's adaptive ingestion engine automatically extracts and analyzes high-fidelity review batches.</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block extra_scripts %}
+<script>
+    const urlInput = document.getElementById('product_url');
+
+    document.getElementById('btn-demo-flipkart').addEventListener('click', () => {
+        urlInput.value = 'https://dl.flipkart.com/dl/item/p/product?pid=CPRHYYHESYZU3J8Y&marketplace=FLIPKART&lid=LSTCPRHYYHESYZU3J8YIMGR81';
+    });
+
+    document.getElementById('btn-demo-amazon').addEventListener('click', () => {
+        urlInput.value = 'https://www.amazon.in/dp/B08N5WRWNW';
+    });
+
+    document.getElementById('btn-demo-books').addEventListener('click', () => {
+        urlInput.value = 'http://books.toscrape.com/catalogue/a-light-in-the-attic_1000/index.html';
+    });
+
+    document.getElementById('btn-demo-local').addEventListener('click', () => {
+        urlInput.value = 'http://demo-ecommerce-reviews.local/products/ultrabook-pro';
+    });
+
+    document.getElementById('live-scan-form').addEventListener('submit', function() {
+        document.getElementById('scan-submit-btn').style.display = 'none';
+        document.getElementById('scan-spinner').style.display = 'flex';
+    });
+</script>
+{% endblock %}

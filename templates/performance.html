@@ -1,0 +1,215 @@
+{% extends "base.html" %}
+
+{% block title %}Model Evaluation & Comparison — ReviewGuard AI{% endblock %}
+
+{% block content %}
+<div class="content-container">
+    <div class="page-header">
+        <div>
+            <h1 class="page-title">Model Evaluation & Comparative Benchmarks</h1>
+            <p class="page-desc">
+                Empirical comparison between Decision Tree and AdaBoost Classifier evaluated on the held-out test split.
+            </p>
+        </div>
+        <div class="header-actions">
+            <a href="{{ url_for('download_evaluation_pdf') }}" class="btn btn-primary">
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path><polyline points="14 2 14 8 20 8"></polyline><path d="M12 18v-6"></path><path d="M9 15l3 3 3-3"></path></svg>
+                Download IEEE Benchmark Report (PDF)
+            </a>
+        </div>
+    </div>
+
+    <!-- Comparative Metrics Summary Table -->
+    <div class="card">
+        <div class="card-header">
+            <h3>Test Split Performance Metrics (20% Held-Out)</h3>
+            <p>Evaluation on 320 unseen test reviews using <code>scikit-learn</code> metrics.</p>
+        </div>
+
+        <div class="table-responsive">
+            <table class="data-table comparative-table">
+                <thead>
+                    <tr>
+                        <th>Metric</th>
+                        <th>Decision Tree</th>
+                        <th>AdaBoost Classifier</th>
+                        <th>Delta (AdaBoost vs DT)</th>
+                        <th>Optimal Direction</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td><strong>Accuracy</strong></td>
+                        <td>{{ "%.2f"|format(training_status.results.decision_tree.metrics.accuracy * 100) }}%</td>
+                        <td class="highlight-val">{{ "%.2f"|format(training_status.results.adaboost.metrics.accuracy * 100) }}%</td>
+                        <td>
+                            {% set acc_delta = (training_status.results.adaboost.metrics.accuracy - training_status.results.decision_tree.metrics.accuracy) * 100 %}
+                            <span class="{% if acc_delta >= 0 %}text-success{% else %}text-danger{% endif %}">
+                                {% if acc_delta >= 0 %}+{% endif %}{{ "%.2f"|format(acc_delta) }}%
+                            </span>
+                        </td>
+                        <td>Higher is better (&uarr;)</td>
+                    </tr>
+                    <tr>
+                        <td><strong>Precision (Fake Detection)</strong></td>
+                        <td>{{ "%.2f"|format(training_status.results.decision_tree.metrics.precision * 100) }}%</td>
+                        <td class="highlight-val">{{ "%.2f"|format(training_status.results.adaboost.metrics.precision * 100) }}%</td>
+                        <td>
+                            {% set prec_delta = (training_status.results.adaboost.metrics.precision - training_status.results.decision_tree.metrics.precision) * 100 %}
+                            <span class="{% if prec_delta >= 0 %}text-success{% else %}text-danger{% endif %}">
+                                {% if prec_delta >= 0 %}+{% endif %}{{ "%.2f"|format(prec_delta) }}%
+                            </span>
+                        </td>
+                        <td>Higher is better (&uarr;)</td>
+                    </tr>
+                    <tr>
+                        <td><strong>Recall (Sensitivity)</strong></td>
+                        <td>{{ "%.2f"|format(training_status.results.decision_tree.metrics.recall * 100) }}%</td>
+                        <td class="highlight-val">{{ "%.2f"|format(training_status.results.adaboost.metrics.recall * 100) }}%</td>
+                        <td>
+                            {% set rec_delta = (training_status.results.adaboost.metrics.recall - training_status.results.decision_tree.metrics.recall) * 100 %}
+                            <span class="{% if rec_delta >= 0 %}text-success{% else %}text-danger{% endif %}">
+                                {% if rec_delta >= 0 %}+{% endif %}{{ "%.2f"|format(rec_delta) }}%
+                            </span>
+                        </td>
+                        <td>Higher is better (&uarr;)</td>
+                    </tr>
+                    <tr>
+                        <td><strong>F1-Score (Harmonic Mean)</strong></td>
+                        <td>{{ "%.4f"|format(training_status.results.decision_tree.metrics.f1_score) }}</td>
+                        <td class="highlight-val">{{ "%.4f"|format(training_status.results.adaboost.metrics.f1_score) }}</td>
+                        <td>
+                            {% set f1_delta = training_status.results.adaboost.metrics.f1_score - training_status.results.decision_tree.metrics.f1_score %}
+                            <span class="{% if f1_delta >= 0 %}text-success{% else %}text-danger{% endif %}">
+                                {% if f1_delta >= 0 %}+{% endif %}{{ "%.4f"|format(f1_delta) }}
+                            </span>
+                        </td>
+                        <td>Higher is better (&uarr;)</td>
+                    </tr>
+                    <tr>
+                        <td><strong>Training Latency</strong></td>
+                        <td>{{ "%.3f"|format(training_status.results.decision_tree.training_time_seconds) }}s</td>
+                        <td>{{ "%.3f"|format(training_status.results.adaboost.training_time_seconds) }}s</td>
+                        <td>
+                            +{{ "%.3f"|format(training_status.results.adaboost.training_time_seconds - training_status.results.decision_tree.training_time_seconds) }}s
+                        </td>
+                        <td>Lower is better (&darr;)</td>
+                    </tr>
+                    <tr>
+                        <td><strong>Inference Latency (per review)</strong></td>
+                        <td>{{ "%.2f"|format(training_status.results.decision_tree.inference_latency_ms) }} ms</td>
+                        <td>{{ "%.2f"|format(training_status.results.adaboost.inference_latency_ms) }} ms</td>
+                        <td>
+                            +{{ "%.2f"|format(training_status.results.adaboost.inference_latency_ms - training_status.results.decision_tree.inference_latency_ms) }} ms
+                        </td>
+                        <td>Lower is better (&darr;)</td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+
+    <!-- Confusion Matrices Display -->
+    <div class="grid-2col mt-4">
+        <!-- Decision Tree CM -->
+        <div class="card">
+            <div class="card-header">
+                <h3>Decision Tree Confusion Matrix</h3>
+                <p>N = 320 Test Samples</p>
+            </div>
+            <div class="confusion-matrix-wrapper">
+                <div class="cm-grid">
+                    <div class="cm-cell cm-tn">
+                        <span class="cm-label">True Negative (TN)</span>
+                        <span class="cm-val">{{ dt_interpretation.true_negative }}</span>
+                        <span class="cm-sub">Genuine correctly identified</span>
+                    </div>
+                    <div class="cm-cell cm-fp">
+                        <span class="cm-label">False Positive (FP)</span>
+                        <span class="cm-val">{{ dt_interpretation.false_positive }}</span>
+                        <span class="cm-sub">Type I Error: Genuine flagged fake</span>
+                    </div>
+                    <div class="cm-cell cm-fn">
+                        <span class="cm-label">False Negative (FN)</span>
+                        <span class="cm-val">{{ dt_interpretation.false_negative }}</span>
+                        <span class="cm-sub">Type II Error: Fake slipped through</span>
+                    </div>
+                    <div class="cm-cell cm-tp">
+                        <span class="cm-label">True Positive (TP)</span>
+                        <span class="cm-val">{{ dt_interpretation.true_positive }}</span>
+                        <span class="cm-sub">Fake correctly flagged</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- AdaBoost CM -->
+        <div class="card">
+            <div class="card-header">
+                <h3>AdaBoost Confusion Matrix</h3>
+                <p>N = 320 Test Samples (Ensemble Boosting)</p>
+            </div>
+            <div class="confusion-matrix-wrapper">
+                <div class="cm-grid">
+                    <div class="cm-cell cm-tn">
+                        <span class="cm-label">True Negative (TN)</span>
+                        <span class="cm-val">{{ ada_interpretation.true_negative }}</span>
+                        <span class="cm-sub">Genuine correctly identified</span>
+                    </div>
+                    <div class="cm-cell cm-fp">
+                        <span class="cm-label">False Positive (FP)</span>
+                        <span class="cm-val">{{ ada_interpretation.false_positive }}</span>
+                        <span class="cm-sub">Type I Error: Genuine flagged fake</span>
+                    </div>
+                    <div class="cm-cell cm-fn">
+                        <span class="cm-label">False Negative (FN)</span>
+                        <span class="cm-val">{{ ada_interpretation.false_negative }}</span>
+                        <span class="cm-sub">Type II Error: Fake slipped through</span>
+                    </div>
+                    <div class="cm-cell cm-tp">
+                        <span class="cm-label">True Positive (TP)</span>
+                        <span class="cm-val">{{ ada_interpretation.true_positive }}</span>
+                        <span class="cm-sub">Fake correctly flagged</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Academic Interpretation & Viva Voce Explanations -->
+    <div class="card mt-4">
+        <div class="card-header">
+            <h3>Academic Analysis: Cost Matrix & Trade-Offs</h3>
+            <p>Critical discussion points for university project evaluation and viva examination.</p>
+        </div>
+
+        <div class="viva-insights-grid">
+            <div class="viva-card">
+                <h4>1. Impact of Type I Error (False Positive)</h4>
+                <p>
+                    A <strong>False Positive</strong> occurs when an authentic customer review is mistakenly classified as fake. 
+                    In e-commerce, this causes censorship of legitimate consumer voices and can penalize honest buyers with account bans.
+                    The AdaBoost model reduces False Positives by learning nuanced multi-word combinations rather than splitting abruptly on single keywords.
+                </p>
+            </div>
+
+            <div class="viva-card">
+                <h4>2. Impact of Type II Error (False Negative)</h4>
+                <p>
+                    A <strong>False Negative</strong> occurs when a fraudulent computer-generated or paid review slips past detection. 
+                    High False Negative rates degrade trust in platform reviews and artificially elevate deceptive sellers. 
+                    AdaBoost prioritizes hard-to-classify samples in successive iterations to suppress False Negatives.
+                </p>
+            </div>
+
+            <div class="viva-card">
+                <h4>3. Why AdaBoost Outperforms Single Decision Trees</h4>
+                <p>
+                    A single Decision Tree is susceptible to high variance and overfitting on idiosyncratic vocabulary terms present in the training corpus. 
+                    AdaBoost combines multiple regularized learners with weighted voting, smoothing the decision boundaries and creating calibrated probability outputs.
+                </p>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

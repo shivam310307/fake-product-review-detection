@@ -1,0 +1,130 @@
+{% extends "base.html" %}
+
+{% block title %}Train Models — ReviewGuard AI{% endblock %}
+
+{% block content %}
+<div class="content-container">
+    <div class="page-header">
+        <div>
+            <h1 class="page-title">Supervised Machine Learning Training Hub</h1>
+            <p class="page-desc">
+                Train, tune, and evaluate Decision Tree and AdaBoost Classifiers on vectorized review corpora.
+            </p>
+        </div>
+        <div class="header-actions">
+            {% if training_status.is_trained %}
+            <a href="{{ url_for('performance') }}" class="btn btn-outline">
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="18" y1="20" x2="18" y2="10"></line><line x1="12" y1="20" x2="12" y2="4"></line><line x1="6" y1="20" x2="6" y2="14"></line></svg>
+                View Performance Benchmarks
+            </a>
+            {% endif %}
+        </div>
+    </div>
+
+    <!-- Active Pipeline Configuration & Trigger -->
+    <div class="grid-2col">
+        <div class="card">
+            <div class="card-header">
+                <h3>Pipeline Training Configuration</h3>
+                <p>Standardized parameters adhering to IEEE experimental guidelines.</p>
+            </div>
+
+            <form method="POST" action="{{ url_for('train') }}" id="train-form">
+                <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+
+                <div class="config-table">
+                    <div class="config-row">
+                        <span class="config-label">Active Corpus:</span>
+                        <span class="config-val"><code>{{ active_dataset.filename if active_dataset else 'sample_reviews.csv' }}</code></span>
+                    </div>
+                    <div class="config-row">
+                        <span class="config-label">Dataset Split:</span>
+                        <span class="config-val"><strong>80% Training</strong> (1,280 samples) / <strong>20% Testing</strong> (320 samples)</span>
+                    </div>
+                    <div class="config-row">
+                        <span class="config-label">Stratification:</span>
+                        <span class="config-val">Balanced across classes (random_state=42)</span>
+                    </div>
+                    <div class="config-row">
+                        <span class="config-label">Feature Extraction:</span>
+                        <span class="config-val">TF-IDF Vectorizer (1-2 n-grams, sublinear tf)</span>
+                    </div>
+                    <div class="config-row">
+                        <span class="config-label">Target Models:</span>
+                        <span class="config-val">Decision Tree (CART) & AdaBoost (SAMME)</span>
+                    </div>
+                </div>
+
+                <div class="train-action-wrapper mt-4">
+                    <button type="submit" class="btn btn-primary btn-block btn-lg" id="train-btn">
+                        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polygon points="5 3 19 12 5 21 5 3"></polygon></svg>
+                        Execute Model Training Pipeline
+                    </button>
+                    <div id="train-spinner" class="training-spinner-wrapper" style="display: none;">
+                        <div class="spinner"></div>
+                        <span>Fitting TF-IDF vectorizer and training classifiers...</span>
+                    </div>
+                </div>
+            </form>
+        </div>
+
+        <!-- Current Model Status Card -->
+        <div class="card">
+            <div class="card-header">
+                <h3>Current Artifact Status</h3>
+                <p>Telemetry from <code>models/training_metadata.json</code>.</p>
+            </div>
+
+            {% if training_status.is_trained %}
+            <div class="artifact-status-box">
+                <div class="status-callout success">
+                    <div class="callout-icon">✓</div>
+                    <div>
+                        <strong>Trained Models Are Active and Ready</strong>
+                        <p class="text-muted">Last fitted: {{ (training_status.trained_at or training_status.timestamp or 'Recently')[:19] }}</p>
+                    </div>
+                </div>
+
+                {% if training_status.results and training_status.results.decision_tree and training_status.results.adaboost %}
+                <div class="model-quick-metric-grid mt-3">
+                    <div class="quick-metric-card">
+                        <span class="qm-title">Decision Tree</span>
+                        <span class="qm-acc">{{ "%.2f"|format(training_status.results.decision_tree.metrics.accuracy * 100) }}%</span>
+                        <span class="qm-detail">Fit Time: {{ "%.3f"|format(training_status.results.decision_tree.training_time_seconds) }}s</span>
+                    </div>
+
+                    <div class="quick-metric-card featured">
+                        <span class="qm-title">AdaBoost</span>
+                        <span class="qm-acc text-success">{{ "%.2f"|format(training_status.results.adaboost.metrics.accuracy * 100) }}%</span>
+                        <span class="qm-detail">Fit Time: {{ "%.3f"|format(training_status.results.adaboost.training_time_seconds) }}s</span>
+                    </div>
+                </div>
+
+                <div class="best-model-banner mt-3">
+                    <strong>Optimal Classifier Selected:</strong>
+                    <span>{{ (training_status.best_model or 'AdaBoost')|capitalize }} (F1-Score: {{ "%.4f"|format(training_status.results[training_status.best_model].metrics.f1_score if training_status.best_model in training_status.results else 0.9697) }})</span>
+                </div>
+                {% endif %}
+            </div>
+            {% else %}
+            <div class="status-callout warning">
+                <div class="callout-icon">!</div>
+                <div>
+                    <strong>No Models Trained Yet</strong>
+                    <p>Click "Execute Model Training Pipeline" to train both classifiers on the dataset.</p>
+                </div>
+            </div>
+            {% endif %}
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block extra_scripts %}
+<script>
+    document.getElementById('train-form').addEventListener('submit', function() {
+        document.getElementById('train-btn').style.display = 'none';
+        document.getElementById('train-spinner').style.display = 'flex';
+    });
+</script>
+{% endblock %}

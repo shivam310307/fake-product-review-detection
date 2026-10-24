@@ -1,0 +1,183 @@
+{% extends "base.html" %}
+
+{% block title %}Dataset Preview — ReviewGuard AI{% endblock %}
+
+{% block content %}
+<div class="content-container">
+    <div class="page-header">
+        <div>
+            <h1 class="page-title">Active Dataset Preview & Statistical Audit</h1>
+            <p class="page-desc">
+                Source: <code>{{ filepath }}</code>
+            </p>
+        </div>
+        <div class="header-actions">
+            <a href="{{ url_for('upload_dataset') }}" class="btn btn-outline">
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path><polyline points="17 8 12 3 7 8"></polyline><line x1="12" y1="3" x2="12" y2="15"></line></svg>
+                Upload Different CSV
+            </a>
+            <a href="{{ url_for('train') }}" class="btn btn-primary">
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 2v4M12 18v4M4.93 4.93l2.83 2.83M16.24 16.24l2.83 2.83M2 12h4M18 12h4M4.93 19.07l2.83-2.83M16.24 7.76l2.83-2.83"></path></svg>
+                Train Models on This Dataset
+            </a>
+        </div>
+    </div>
+
+    <!-- Metrics Ribbon -->
+    <div class="metrics-grid">
+        <div class="metric-card">
+            <div class="metric-header">
+                <span class="metric-title">TOTAL RECORDS</span>
+            </div>
+            <div class="metric-value">{{ stats.total_records }}</div>
+            <div class="metric-footer">Total labeled customer reviews</div>
+        </div>
+
+        <div class="metric-card">
+            <div class="metric-header">
+                <span class="metric-title">TOTAL COLUMNS</span>
+            </div>
+            <div class="metric-value">{{ columns|length }}</div>
+            <div class="metric-footer">{{ columns|join(', ') }}</div>
+        </div>
+
+        <div class="metric-card">
+            <div class="metric-header">
+                <span class="metric-title">GENUINE REVIEWS</span>
+            </div>
+            <div class="metric-value text-success">{{ stats.genuine_count }}</div>
+            <div class="metric-footer">
+                {{ "%.1f"|format((stats.genuine_count / stats.total_records) * 100) }}% class proportion
+            </div>
+        </div>
+
+        <div class="metric-card">
+            <div class="metric-header">
+                <span class="metric-title">FAKE REVIEWS</span>
+            </div>
+            <div class="metric-value text-danger">{{ stats.fake_count }}</div>
+            <div class="metric-footer">
+                {{ "%.1f"|format((stats.fake_count / stats.total_records) * 100) }}% class proportion
+            </div>
+        </div>
+    </div>
+
+    <!-- Data Quality Indicators -->
+    <div class="grid-2col mt-4">
+        <!-- Missing Values Card -->
+        <div class="card">
+            <div class="card-header">
+                <h3>Missing Value Audit</h3>
+                <p>Distribution of null or unpopulated cells per column.</p>
+            </div>
+            <div class="table-responsive">
+                <table class="data-table">
+                    <thead>
+                        <tr>
+                            <th>Column Name</th>
+                            <th>Missing Count</th>
+                            <th>Integrity Status</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for col, missing_cnt in missing_stats.items() %}
+                        <tr>
+                            <td><code>{{ col }}</code></td>
+                            <td>{{ missing_cnt }}</td>
+                            <td>
+                                {% if missing_cnt == 0 %}
+                                <span class="badge badge-success">100% Clean</span>
+                                {% else %}
+                                <span class="badge badge-warning">{{ missing_cnt }} Imputed</span>
+                                {% endif %}
+                            </td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        </div>
+
+        <!-- Class & Duplicate Analysis -->
+        <div class="card">
+            <div class="card-header">
+                <h3>Corpus Integrity Analysis</h3>
+                <p>Linguistic redundancy and balance evaluation.</p>
+            </div>
+            
+            <div class="integrity-stat-row">
+                <div class="integrity-item">
+                    <span class="integrity-label">Duplicate Review Texts:</span>
+                    <span class="integrity-value {% if duplicate_count > 0 %}text-warning{% else %}text-success{% endif %}">
+                        {{ duplicate_count }} duplicates found
+                    </span>
+                </div>
+                <p class="integrity-desc">
+                    Identical reviews across different IDs often indicate syndicated spam campaigns.
+                </p>
+            </div>
+
+            <div class="integrity-stat-row mt-3">
+                <div class="integrity-label">Class Balance Ratio:</div>
+                <div class="progress-bar-stacked mt-2">
+                    <div class="fill-genuine" style="width: {{ (stats.genuine_count / stats.total_records) * 100 }}%;" title="Genuine"></div>
+                    <div class="fill-fake" style="width: {{ (stats.fake_count / stats.total_records) * 100 }}%;" title="Fake"></div>
+                </div>
+                <div class="stacked-legend mt-2">
+                    <span><span class="legend-dot dot-genuine"></span> Genuine: {{ stats.genuine_count }}</span>
+                    <span><span class="legend-dot dot-fake"></span> Fake: {{ stats.fake_count }}</span>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- First 50 Records Preview Table -->
+    <div class="card mt-4">
+        <div class="card-header">
+            <h3>Sample Records Preview (First 50 Rows)</h3>
+            <p>Interactive table displaying ingested feature schema.</p>
+        </div>
+
+        <div class="table-responsive preview-table-container">
+            <table class="data-table table-striped">
+                <thead>
+                    <tr>
+                        <th>#</th>
+                        {% for col in columns %}
+                        <th>{{ col }}</th>
+                        {% endfor %}
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for row in records %}
+                    <tr>
+                        <td>{{ loop.index }}</td>
+                        {% for col in columns %}
+                        <td>
+                            {% if col == 'text' %}
+                            <div class="text-preview-cell" title="{{ row[col] }}">
+                                {{ row[col][:110] }}{% if row[col]|length > 110 %}...{% endif %}
+                            </div>
+                            {% elif col in ['label', 'label_binary'] %}
+                                {% if row[col] in [1, '1', 'CG', 'fake', 'Fake'] %}
+                                <span class="status-badge danger">Fake (1)</span>
+                                {% else %}
+                                <span class="status-badge success">Genuine (0)</span>
+                                {% endif %}
+                            {% elif col == 'rating' %}
+                                <span class="badge badge-subtle">★ {{ row[col] }}</span>
+                            {% elif col == 'vocabulary_richness' %}
+                                <code>{{ "%.2f"|format(row[col]|float) }}</code>
+                            {% else %}
+                                {{ row[col] }}
+                            {% endif %}
+                        </td>
+                        {% endfor %}
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+{% endblock %}

@@ -1,0 +1,126 @@
+{% extends "base.html" %}
+
+{% block title %}Live URL Audit Results — ReviewGuard AI{% endblock %}
+
+{% block content %}
+<div class="content-container">
+    <div class="page-header">
+        <div>
+            <h1 class="page-title">Live Product Page Authenticity Audit</h1>
+            <p class="page-desc">Target URL: <a href="{{ analysis.url }}" target="_blank" rel="noopener" class="text-link">{{ analysis.url }}</a></p>
+        </div>
+        <div class="header-actions">
+            <a href="{{ url_for('download_live_analysis_pdf') }}" class="btn btn-primary">
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path><polyline points="14 2 14 8 20 8"></polyline><path d="M12 18v-6"></path><path d="M9 15l3 3 3-3"></path></svg>
+                Download Audit Report (PDF)
+            </a>
+            <a href="{{ url_for('live_prediction') }}" class="btn btn-outline">Scan Another URL</a>
+        </div>
+    </div>
+
+    <!-- Trust Score & Summary Banner -->
+    <div class="card trust-summary-card">
+        <div class="trust-flex-row">
+            <!-- Left: Trust Meter -->
+            <div class="trust-score-display">
+                <div class="trust-circle-badge {% if analysis.trust_score >= 70 %}trust-high{% elif analysis.trust_score >= 40 %}trust-mid{% else %}trust-low{% endif %}">
+                    <span class="trust-number">{{ analysis.trust_score }}%</span>
+                    <span class="trust-lbl">Trust Score</span>
+                </div>
+                <div class="trust-verdict-text">
+                    <h2 class="trust-prod-title" style="margin: 0 0 4px 0; font-size: 1.25rem; font-weight: 700; color: #fff;">{{ analysis.product_name }}</h2>
+                    <h3>Level: {{ analysis.trust_level }} Trust</h3>
+                    <p>Calculated across {{ analysis.reviews_analyzed_count }} extracted customer reviews &bull; <span class="badge badge-subtle">{{ analysis.extraction_type or 'Web Ingestion' }}</span></p>
+                </div>
+            </div>
+
+            <!-- Right: Breakdown Metrics -->
+            <div class="trust-stats-box">
+                <div class="trust-stat-col">
+                    <span class="ts-num text-success">{{ analysis.genuine_count }}</span>
+                    <span class="ts-lbl">Genuine Reviews</span>
+                </div>
+                <div class="trust-stat-col">
+                    <span class="ts-num text-danger">{{ analysis.fake_count }}</span>
+                    <span class="ts-lbl">Suspicious / Fake</span>
+                </div>
+                <div class="trust-stat-col">
+                    <span class="ts-num">{{ analysis.reviews_analyzed_count }}</span>
+                    <span class="ts-lbl">Total Sampled</span>
+                </div>
+            </div>
+        </div>
+
+        <!-- Stacked Progress Bar -->
+        <div class="progress-bar-stacked mt-4">
+            <div class="fill-genuine" style="width: {{ (analysis.genuine_count / analysis.reviews_analyzed_count) * 100 }}%;"></div>
+            <div class="fill-fake" style="width: {{ (analysis.fake_count / analysis.reviews_analyzed_count) * 100 }}%;"></div>
+        </div>
+        <div class="stacked-legend mt-2">
+            <span><span class="legend-dot dot-genuine"></span> Genuine Reviews: {{ analysis.genuine_count }} ({{ "%.1f"|format((analysis.genuine_count / analysis.reviews_analyzed_count) * 100) }}%)</span>
+            <span><span class="legend-dot dot-fake"></span> Suspicious / Manipulated: {{ analysis.fake_count }} ({{ "%.1f"|format((analysis.fake_count / analysis.reviews_analyzed_count) * 100) }}%)</span>
+        </div>
+    </div>
+
+    <!-- Extracted Reviews Breakdown Table -->
+    <div class="card mt-4">
+        <div class="card-header">
+            <h3>Extracted Customer Reviews (Batch Predictions)</h3>
+            <p>Individual authenticity classifications evaluated with {{ analysis.model_used|capitalize }}.</p>
+        </div>
+
+        <div class="table-responsive">
+            <table class="data-table">
+                <thead>
+                    <tr>
+                        <th>#</th>
+                        <th>Review Text</th>
+                        <th>Rating</th>
+                        <th>Classification</th>
+                        <th>Confidence</th>
+                        <th>Key Signals</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for rev in analysis.detailed_reviews %}
+                    <tr>
+                        <td>{{ loop.index }}</td>
+                        <td class="text-truncate-cell-large" title="{{ rev.text }}">
+                            "{{ rev.text }}"
+                        </td>
+                        <td>
+                            {% if rev.rating %}
+                            ★ {{ rev.rating }}
+                            {% else %}
+                            <span class="text-muted">&mdash;</span>
+                            {% endif %}
+                        </td>
+                        <td>
+                            {% if rev.prediction_label == 'Fake' %}
+                            <span class="status-badge danger">Fake / Suspicious</span>
+                            {% else %}
+                            <span class="status-badge success">Genuine</span>
+                            {% endif %}
+                        </td>
+                        <td>
+                            <strong>{{ "%.1f"|format(rev.confidence_score * 100) }}%</strong>
+                        </td>
+                        <td>
+                            {% if rev.top_keywords %}
+                            <div class="table-kw-chips">
+                                {% for kw in rev.top_keywords[:3] %}
+                                <span class="badge badge-subtle">{{ kw }}</span>
+                                {% endfor %}
+                            </div>
+                            {% else %}
+                            <span class="text-muted">&mdash;</span>
+                            {% endif %}
+                        </td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+{% endblock %}

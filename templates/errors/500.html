@@ -1,0 +1,12 @@
+{% extends "base.html" %}
+{% block title %}500 Internal Server Error — ReviewGuard AI{% endblock %}
+{% block content %}
+<div class="error-container">
+    <div class="error-card">
+        <h1 class="error-code">500</h1>
+        <h2>Internal Server Error</h2>
+        <p class="error-desc">An unexpected error occurred during execution. Diagnostic details have been logged.</p>
+        <a href="{{ url_for('dashboard') }}" class="btn btn-primary">Return to Dashboard</a>
+    </div>
+</div>
+{% endblock %}

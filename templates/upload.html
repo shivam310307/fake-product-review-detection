@@ -1,0 +1,200 @@
+{% extends "base.html" %}
+
+{% block title %}Upload Dataset — ReviewGuard AI{% endblock %}
+
+{% block content %}
+<div class="content-container">
+    <div class="page-header">
+        <div>
+            <h1 class="page-title">Dataset Upload & Ingestion</h1>
+            <p class="page-desc">Upload labeled review datasets in CSV format for training, validation, and testing.</p>
+        </div>
+        <div class="header-actions">
+            <a href="{{ url_for('preview_dataset') }}" class="btn btn-outline">
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path><polyline points="14 2 14 8 20 8"></polyline><line x1="16" y1="13" x2="8" y2="13"></line><line x1="16" y1="17" x2="8" y2="17"></line><polyline points="10 9 9 9 8 9"></polyline></svg>
+                Preview Active Dataset
+            </a>
+        </div>
+    </div>
+
+    <div class="grid-2col">
+        <!-- Upload Form Card -->
+        <div class="card">
+            <div class="card-header">
+                <h3>Select CSV File</h3>
+                <p>Standardized CSV format with labeled reviews.</p>
+            </div>
+
+            <form method="POST" action="{{ url_for('upload_dataset') }}" enctype="multipart/form-data" class="upload-form">
+                <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+
+                <div class="dropzone-area" id="dropzone">
+                    <div class="dropzone-icon">📁</div>
+                    <h4>Drag & Drop CSV Dataset Here</h4>
+                    <p class="dropzone-sub">or click to browse from local computer</p>
+                    <input type="file" id="file" name="file" accept=".csv" class="dropzone-input" required>
+                    <div id="file-chosen-name" class="file-chosen-text"></div>
+                </div>
+
+                <div class="upload-actions">
+                    <button type="submit" class="btn btn-primary btn-block btn-lg">
+                        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path><polyline points="17 8 12 3 7 8"></polyline><line x1="12" y1="3" x2="12" y2="15"></line></svg>
+                        Upload & Validate Dataset
+                    </button>
+                </div>
+            </form>
+        </div>
+
+        <!-- Schema Specification Card -->
+        <div class="card">
+            <div class="card-header">
+                <h3>Dataset Schema Requirements</h3>
+                <p>The system automatically maps common column aliases.</p>
+            </div>
+
+            <div class="schema-table-wrapper">
+                <table class="schema-table">
+                    <thead>
+                        <tr>
+                            <th>Column</th>
+                            <th>Status</th>
+                            <th>Description</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td><code>text</code> / <code>review</code></td>
+                            <td><span class="badge badge-required">Required</span></td>
+                            <td>The raw text of the customer review.</td>
+                        </tr>
+                        <tr>
+                            <td><code>label</code> / <code>label_binary</code></td>
+                            <td><span class="badge badge-required">Required</span></td>
+                            <td>Binary target: 0 (Genuine) or 1 (Fake). Also supports 'CG'/'OR', 'fake'/'real'.</td>
+                        </tr>
+                        <tr>
+                            <td><code>category</code></td>
+                            <td><span class="badge badge-optional">Optional</span></td>
+                            <td>Product vertical (e.g. Electronics, Books, Beauty, Home).</td>
+                        </tr>
+                        <tr>
+                            <td><code>rating</code></td>
+                            <td><span class="badge badge-optional">Optional</span></td>
+                            <td>Customer rating (1.0 to 5.0 scale).</td>
+                        </tr>
+                        <tr>
+                            <td><code>vocabulary_richness</code></td>
+                            <td><span class="badge badge-auto">Computed</span></td>
+                            <td>Type-Token Ratio (TTR) computed automatically during preprocessing.</td>
+                        </tr>
+                        <tr>
+                            <td><code>text_length</code></td>
+                            <td><span class="badge badge-auto">Computed</span></td>
+                            <td>Character and word counts extracted automatically.</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+
+            <div class="info-callout mt-4">
+                <strong>Maximum upload size:</strong> 16 MB. Empty rows and unreadable characters will be automatically sanitized.
+            </div>
+        </div>
+    </div>
+
+    <!-- Upload History & Managed Datasets -->
+    <div class="card mt-4">
+        <div class="card-header">
+            <h3>Uploaded Datasets Archive</h3>
+            <p>Manage and switch active training datasets.</p>
+        </div>
+
+        {% if datasets %}
+        <div class="table-responsive">
+            <table class="data-table">
+                <thead>
+                    <tr>
+                        <th>Status</th>
+                        <th>Filename</th>
+                        <th>Total Records</th>
+                        <th>Genuine</th>
+                        <th>Fake</th>
+                        <th>Uploaded At</th>
+                        <th>Action</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for d in datasets %}
+                    <tr>
+                        <td>
+                            {% if d.is_active %}
+                            <span class="status-badge success">Active</span>
+                            {% else %}
+                            <span class="status-badge muted">Archived</span>
+                            {% endif %}
+                        </td>
+                        <td><strong>{{ d.filename }}</strong></td>
+                        <td>{{ d.total_rows }}</td>
+                        <td><span class="text-success">{{ d.genuine_count }}</span></td>
+                        <td><span class="text-danger">{{ d.fake_count }}</span></td>
+                        <td class="text-muted">{{ d.uploaded_at.strftime('%Y-%m-%d %H:%M') }}</td>
+                        <td>
+                            {% if not d.is_active %}
+                            <form method="POST" action="{{ url_for('activate_dataset', dataset_id=d.id) }}" style="display:inline;">
+                                <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+                                <button type="submit" class="btn btn-xs btn-outline">Set Active</button>
+                            </form>
+                            {% else %}
+                            <span class="badge badge-subtle">Current</span>
+                            {% endif %}
+                        </td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+        {% else %}
+        <p class="text-muted p-4">No uploaded datasets recorded in database. The default benchmark dataset (<code>dataset/sample_reviews.csv</code>) is active.</p>
+        {% endif %}
+    </div>
+</div>
+{% endblock %}
+
+{% block extra_scripts %}
+<script>
+    const fileInput = document.getElementById('file');
+    const fileChosen = document.getElementById('file-chosen-name');
+    const dropzone = document.getElementById('dropzone');
+
+    fileInput.addEventListener('change', function () {
+        if (this.files && this.files[0]) {
+            fileChosen.textContent = 'Selected: ' + this.files[0].name + ' (' + (this.files[0].size / 1024).toFixed(1) + ' KB)';
+            dropzone.classList.add('has-file');
+        }
+    });
+
+    ['dragenter', 'dragover'].forEach(eventName => {
+        dropzone.addEventListener(eventName, (e) => {
+            e.preventDefault();
+            dropzone.classList.add('dragover');
+        }, false);
+    });
+
+    ['dragleave', 'drop'].forEach(eventName => {
+        dropzone.addEventListener(eventName, (e) => {
+            e.preventDefault();
+            dropzone.classList.remove('dragover');
+        }, false);
+    });
+
+    dropzone.addEventListener('drop', (e) => {
+        const dt = e.dataTransfer;
+        const files = dt.files;
+        if (files.length) {
+            fileInput.files = files;
+            fileChosen.textContent = 'Selected: ' + files[0].name;
+            dropzone.classList.add('has-file');
+        }
+    });
+</script>
+{% endblock %}

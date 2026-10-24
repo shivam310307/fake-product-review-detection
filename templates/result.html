@@ -1,0 +1,179 @@
+{% extends "base.html" %}
+
+{% block title %}Prediction Result #{{ record.id }} — ReviewGuard AI{% endblock %}
+
+{% block content %}
+<div class="content-container">
+    <div class="page-header">
+        <div>
+            <h1 class="page-title">Prediction Verdict & Forensic Analysis</h1>
+            <p class="page-desc">Audit Record <code>#{{ record.id }}</code> &bull; Analyzed on {{ record.created_at.strftime('%Y-%m-%d %H:%M UTC') }}</p>
+        </div>
+        <div class="header-actions">
+            <a href="{{ url_for('download_prediction_pdf', prediction_id=record.id) }}" class="btn btn-primary">
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path><polyline points="14 2 14 8 20 8"></polyline><path d="M12 18v-6"></path><path d="M9 15l3 3 3-3"></path></svg>
+                Download PDF Certificate
+            </a>
+            <a href="{{ url_for('predict') }}" class="btn btn-outline">Analyze Another</a>
+        </div>
+    </div>
+
+    <!-- Verdict Banner Card -->
+    <div class="card verdict-card {% if record.prediction_label == 'Fake' %}verdict-fake{% else %}verdict-genuine{% endif %}">
+        <div class="verdict-header">
+            <div class="verdict-icon">
+                {% if record.prediction_label == 'Fake' %}
+                <svg width="36" height="36" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><circle cx="12" cy="12" r="10"></circle><line x1="15" y1="9" x2="9" y2="15"></line><line x1="9" y1="9" x2="15" y2="15"></line></svg>
+                {% else %}
+                <svg width="36" height="36" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"></path><polyline points="22 4 12 14.01 9 11.01"></polyline></svg>
+                {% endif %}
+            </div>
+            <div>
+                <span class="verdict-tag">MODEL CLASSIFICATION</span>
+                <h2 class="verdict-title">
+                    {% if record.prediction_label == 'Fake' %}
+                    Fake / Computer-Generated Review
+                    {% else %}
+                    Genuine / Authentic Review
+                    {% endif %}
+                </h2>
+                <p class="verdict-model-info">
+                    Evaluated by <strong>{{ record.model_name|capitalize }}</strong> with 
+                    <strong>{{ "%.1f"|format(record.confidence_score * 100) }}%</strong> confidence.
+                </p>
+            </div>
+        </div>
+
+        <!-- Confidence Gauge Bar -->
+        <div class="verdict-gauge-wrapper">
+            <div class="gauge-labels">
+                <span>Authenticity Probability: {{ "%.1f"|format(record.genuine_probability * 100) }}%</span>
+                <span>Deception Probability: {{ "%.1f"|format(record.fake_probability * 100) }}%</span>
+            </div>
+            <div class="progress-bar-stacked large-bar">
+                <div class="fill-genuine" style="width: {{ record.genuine_probability * 100 }}%;"></div>
+                <div class="fill-fake" style="width: {{ record.fake_probability * 100 }}%;"></div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Sentiment vs. Authenticity Decoupling Diagnostic Card (Teacher & Viva Academic Defense) -->
+    {% if decoupling %}
+    <div class="card mt-4 decoupling-card">
+        <div class="card-header">
+            <div>
+                <h3 style="margin: 0 0 4px 0;">Sentiment vs. Authenticity Decoupling Analysis</h3>
+                <p class="text-muted" style="margin: 0;">Academic problem defense: <em>How to detect fake reviews (astroturfing or smear) on good products?</em></p>
+            </div>
+            <div>
+                <span class="status-badge {{ decoupling.badge_color or 'info' }}">{{ decoupling.scenario_badge }}</span>
+            </div>
+        </div>
+
+        <div class="decoupling-grid">
+            <div class="decoupling-pill">
+                <span class="dp-label">Detected Review Sentiment</span>
+                <strong class="dp-val">{{ decoupling.sentiment }}</strong>
+            </div>
+            <div class="decoupling-pill">
+                <span class="dp-label">Linguistic Authenticity</span>
+                <strong class="dp-val {% if decoupling.authenticity == 'Fake' %}text-danger{% else %}text-success{% endif %}">{{ decoupling.authenticity }}</strong>
+            </div>
+            <div class="decoupling-pill">
+                <span class="dp-label">Vocabulary Richness (TTR)</span>
+                <strong class="dp-val">{{ "%.2f"|format(decoupling.vocabulary_richness) }}</strong>
+            </div>
+            <div class="decoupling-pill">
+                <span class="dp-label">Exclamation Marks</span>
+                <strong class="dp-val">{{ decoupling.exclamation_count }}</strong>
+            </div>
+        </div>
+
+        <div class="scenario-explanation-box">
+            <strong>Evaluator Viva Explanation:</strong>
+            <p>{{ decoupling.teacher_summary }}</p>
+        </div>
+    </div>
+    {% endif %}
+
+    <!-- Review Text & Linguistic Indicators -->
+    <div class="grid-2col mt-4">
+        <!-- Review Text Card -->
+        <div class="card">
+            <div class="card-header">
+                <h3>Submitted Customer Review</h3>
+                <div class="badges-row">
+                    <span class="badge badge-subtle">{{ record.category or 'General' }}</span>
+                    {% if record.rating %}
+                    <span class="badge badge-subtle">★ {{ record.rating }}</span>
+                    {% endif %}
+                </div>
+            </div>
+            <div class="submitted-review-box">
+                <p class="review-quotation">"{{ record.review_text }}"</p>
+            </div>
+
+            <!-- Stylometric Feature Statistics -->
+            <div class="stylometrics-grid mt-3">
+                <div class="sm-item">
+                    <span class="sm-label">Word Count:</span>
+                    <span class="sm-val">{{ stats.word_count }}</span>
+                </div>
+                <div class="sm-item">
+                    <span class="sm-label">Sentence Count:</span>
+                    <span class="sm-val">{{ stats.sentence_count }}</span>
+                </div>
+                <div class="sm-item">
+                    <span class="sm-label">Avg Word Length:</span>
+                    <span class="sm-val">{{ "%.2f"|format(stats.average_word_length) }} chars</span>
+                </div>
+                <div class="sm-item">
+                    <span class="sm-label">Vocabulary Richness:</span>
+                    <span class="sm-val">{{ "%.2f"|format(stats.vocabulary_richness) }} TTR</span>
+                </div>
+                <div class="sm-item">
+                    <span class="sm-label">Exclamation Marks:</span>
+                    <span class="sm-val">{{ stats.exclamation_count }}</span>
+                </div>
+                <div class="sm-item">
+                    <span class="sm-label">Question Marks:</span>
+                    <span class="sm-val">{{ stats.question_count }}</span>
+                </div>
+            </div>
+        </div>
+
+        <!-- Keyword Signals & Responsible AI Card -->
+        <div class="card">
+            <div class="card-header">
+                <h3>Top Salient TF-IDF N-Grams</h3>
+                <p>Keywords influencing model activation for this review.</p>
+            </div>
+
+            {% if keywords %}
+            <div class="keywords-cloud">
+                {% for kw in keywords %}
+                <span class="kw-chip">
+                    <span class="kw-word">{{ kw }}</span>
+                </span>
+                {% endfor %}
+            </div>
+            {% else %}
+            <p class="text-muted p-2">Standard general vocabulary; no outlier n-grams triggered.</p>
+            {% endif %}
+
+            <!-- Epistemic Limitation Disclaimer -->
+            <div class="disclaimer-callout mt-4">
+                <div class="disclaimer-icon">ℹ️</div>
+                <div>
+                    <strong>Responsible AI & Epistemic Limitation:</strong>
+                    <p>
+                        This evaluation is based solely on linguistic, lexical, and statistical characteristics 
+                        derived from the trained machine learning models. A classification of "Genuine" or "Fake" 
+                        reflects writing pattern probability and does not verify physical product functionality or merchant veracity.
+                    </p>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

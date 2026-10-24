@@ -1,0 +1,150 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{% block title %}ReviewGuard AI — Fake Review Detection System{% endblock %}</title>
+    <meta name="description" content="Advanced Fake Product Review Detection and Trust Analysis System using Machine Learning and NLP.">
+    <!-- CSRF Token Meta -->
+    <meta name="csrf-token" content="{{ csrf_token() }}">
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+    <!-- Chart.js CDN -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.1/dist/chart.umd.min.js"></script>
+    <!-- Custom CSS -->
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+    {% block extra_head %}{% endblock %}
+</head>
+<body class="theme-dark">
+    <div class="layout-wrapper">
+        <!-- Sidebar Navigation -->
+        <aside class="sidebar">
+            <div class="sidebar-header">
+                <a href="{{ url_for('index') }}" class="brand-link">
+                    <div class="brand-badge">RG</div>
+                    <div class="brand-text">
+                        <span class="brand-title">ReviewGuard AI</span>
+                        <span class="brand-sub">ML Trust Analysis</span>
+                    </div>
+                </a>
+            </div>
+
+            <nav class="sidebar-nav">
+                <div class="nav-section-title">MAIN</div>
+                <a href="{{ url_for('index') }}" class="nav-item {% if request.endpoint == 'index' %}active{% endif %}">
+                    <svg class="nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"></path><polyline points="9 22 9 12 15 12 15 22"></polyline></svg>
+                    <span>Home</span>
+                </a>
+                
+                <a href="{{ url_for('dashboard') }}" class="nav-item {% if request.endpoint == 'dashboard' %}active{% endif %}">
+                    <svg class="nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="7" height="7"></rect><rect x="14" y="3" width="7" height="7"></rect><rect x="14" y="14" width="7" height="7"></rect><rect x="3" y="14" width="7" height="7"></rect></svg>
+                    <span>Dashboard</span>
+                </a>
+
+                <div class="nav-section-title">DATASET & MODELS</div>
+                <a href="{{ url_for('upload_dataset') }}" class="nav-item {% if request.endpoint == 'upload_dataset' %}active{% endif %}">
+                    <svg class="nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path><polyline points="17 8 12 3 7 8"></polyline><line x1="12" y1="3" x2="12" y2="15"></line></svg>
+                    <span>Upload Dataset</span>
+                </a>
+                <a href="{{ url_for('preview_dataset') }}" class="nav-item {% if request.endpoint == 'preview_dataset' %}active{% endif %}">
+                    <svg class="nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path><polyline points="14 2 14 8 20 8"></polyline><line x1="16" y1="13" x2="8" y2="13"></line><line x1="16" y1="17" x2="8" y2="17"></line><polyline points="10 9 9 9 8 9"></polyline></svg>
+                    <span>Dataset Preview</span>
+                </a>
+                <a href="{{ url_for('train') }}" class="nav-item {% if request.endpoint == 'train' %}active{% endif %}">
+                    <svg class="nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 2v4M12 18v4M4.93 4.93l2.83 2.83M16.24 16.24l2.83 2.83M2 12h4M18 12h4M4.93 19.07l2.83-2.83M16.24 7.76l2.83-2.83"></path></svg>
+                    <span>Train Models</span>
+                </a>
+                <a href="{{ url_for('performance') }}" class="nav-item {% if request.endpoint == 'performance' %}active{% endif %}">
+                    <svg class="nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="18" y1="20" x2="18" y2="10"></line><line x1="12" y1="20" x2="12" y2="4"></line><line x1="6" y1="20" x2="6" y2="14"></line></svg>
+                    <span>Performance Evaluation</span>
+                </a>
+
+                <div class="nav-section-title">ANALYSIS & AUDIT</div>
+                <a href="{{ url_for('predict') }}" class="nav-item {% if request.endpoint in ['predict', 'view_result'] %}active{% endif %}">
+                    <svg class="nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"></path><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"></path></svg>
+                    <span>Predict Review</span>
+                </a>
+                <a href="{{ url_for('live_prediction') }}" class="nav-item {% if request.endpoint == 'live_prediction' %}active{% endif %}">
+                    <svg class="nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"></circle><line x1="2" y1="12" x2="22" y2="12"></line><path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"></path></svg>
+                    <span>Live URL Analysis</span>
+                </a>
+                <a href="{{ url_for('history') }}" class="nav-item {% if request.endpoint == 'history' %}active{% endif %}">
+                    <svg class="nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"></circle><polyline points="12 6 12 12 16 14"></polyline></svg>
+                    <span>Prediction History</span>
+                </a>
+            </nav>
+
+            <div class="sidebar-footer">
+                <div class="user-profile">
+                    <div class="avatar">ALL</div>
+                    <div class="user-info">
+                        <span class="user-name">Public Access</span>
+                        <span class="user-role">No Login Required</span>
+                    </div>
+                </div>
+            </div>
+        </aside>
+
+        <!-- Main Content Area -->
+        <div class="main-wrapper">
+            <!-- Top Navbar -->
+            <header class="topbar">
+                <div class="topbar-left">
+                    <span class="project-tag">IEEE Academic Standard ML System</span>
+                </div>
+                <div class="topbar-right">
+                    <div class="model-status-indicator">
+                        {% if model_status.adaboost %}
+                        <span class="status-pill status-ready" title="AdaBoost & Decision Tree models loaded">
+                            <span class="indicator-dot"></span> ML Models Active
+                        </span>
+                        {% else %}
+                        <span class="status-pill status-warning" title="No serialized model found. Train on the Train Models page.">
+                            <span class="indicator-dot warning"></span> Models Need Training
+                        </span>
+                        {% endif %}
+                    </div>
+                    <span class="status-pill status-ready" style="background: rgba(99, 102, 241, 0.15); color: #c7d2fe; border: 1px solid rgba(99, 102, 241, 0.35);">
+                        <span>🔓</span> Open Access (No Login Required)
+                    </span>
+                </div>
+            </header>
+
+            <!-- Flash Alert Messages -->
+            <div class="alert-container">
+                {% with messages = get_flashed_messages(with_categories=true) %}
+                {% if messages %}
+                    {% for category, message in messages %}
+                    <div class="alert alert-{{ category }}">
+                        <div class="alert-content">{{ message }}</div>
+                        <button class="alert-close" onclick="this.parentElement.remove();">&times;</button>
+                    </div>
+                    {% endfor %}
+                {% endif %}
+                {% endwith %}
+            </div>
+
+            <!-- Page Body Content -->
+            <main class="page-content">
+                {% block content %}{% endblock %}
+            </main>
+
+            <!-- Footer -->
+            <footer class="app-footer">
+                <div class="footer-left">
+                    <strong>ReviewGuard AI</strong> &mdash; Advanced Fake Review Detection & Trust Analysis
+                </div>
+                <div class="footer-right">
+                    <span>Final Year Engineering Academic Project</span>
+                </div>
+            </footer>
+        </div>
+    </div>
+
+    <!-- Core App JS -->
+    <script src="{{ url_for('static', filename='js/main.js') }}"></script>
+    {% block extra_scripts %}{% endblock %}
+</body>
+</html>
