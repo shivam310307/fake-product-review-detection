@@ -13,6 +13,14 @@ from src.preprocessing import clean_text, compute_linguistic_features
 # In-memory cache for loaded model pipelines
 _PIPELINE_CACHE = {}
 
+def _resolve_model_dir(model_dir: str = "models") -> str:
+    """Safely resolves model directory whether run locally or serverless on Vercel."""
+    if os.path.isabs(model_dir):
+        return model_dir
+    base_dir = os.path.abspath(os.path.join(os.path.dirname(__file__), ".."))
+    candidate = os.path.join(base_dir, model_dir)
+    return candidate if os.path.exists(candidate) else model_dir
+
 def clear_model_cache():
     """Clears cached model pipelines from memory."""
     global _PIPELINE_CACHE
@@ -20,8 +28,9 @@ def clear_model_cache():
 
 def get_model_status(model_dir: str = "models") -> dict:
     """Checks whether the serialized models exist on disk."""
-    dt_path = os.path.join(model_dir, "decision_tree_model.joblib")
-    ada_path = os.path.join(model_dir, "adaboost_model.joblib")
+    resolved_dir = _resolve_model_dir(model_dir)
+    dt_path = os.path.join(resolved_dir, "decision_tree_model.joblib")
+    ada_path = os.path.join(resolved_dir, "adaboost_model.joblib")
     return {
         "decision_tree": os.path.exists(dt_path),
         "adaboost": os.path.exists(ada_path)
@@ -32,6 +41,7 @@ def get_pipeline(model_name: str = "adaboost", model_dir: str = "models"):
     Retrieves or lazily loads the requested trained model pipeline from disk.
     Supported model names: 'Decision Tree', 'AdaBoost', or file basenames.
     """
+    resolved_dir = _resolve_model_dir(model_dir)
     normalized_name = str(model_name).strip().lower()
     
     if "tree" in normalized_name or "dt" in normalized_name or "decision" in normalized_name:
@@ -41,11 +51,11 @@ def get_pipeline(model_name: str = "adaboost", model_dir: str = "models"):
         filename = "adaboost_model.joblib"
         canonical_name = "AdaBoost Classifier"
         
-    cache_key = (model_dir, filename)
+    cache_key = (resolved_dir, filename)
     if cache_key in _PIPELINE_CACHE:
         return _PIPELINE_CACHE[cache_key], canonical_name
         
-    model_path = os.path.join(model_dir, filename)
+    model_path = os.path.join(resolved_dir, filename)
     if not os.path.exists(model_path):
         # Fallback to the other model if requested model is missing
         alt_filename = "decision_tree_model.joblib" if filename == "adaboost_model.joblib" else "adaboost_model.joblib"

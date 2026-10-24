@@ -792,21 +792,38 @@ def create_app(config_name='default'):
     app = Flask(__name__)
     app.config.from_object(config_by_name[config_name])
 
+    # Ensure writable directories exist, safely handling read-only serverless filesystems
     for folder in [
-        app.config['UPLOAD_FOLDER'],
-        app.config['DATASET_FOLDER'],
-        app.config['MODEL_FOLDER'],
-        app.config['REPORT_FOLDER'],
-        os.path.join(app.root_path, 'instance')
+        app.config.get('UPLOAD_FOLDER'),
+        app.config.get('REPORT_FOLDER'),
     ]:
-        os.makedirs(folder, exist_ok=True)
+        if folder:
+            try:
+                os.makedirs(folder, exist_ok=True)
+            except OSError:
+                pass
+
+    if not (os.environ.get('VERCEL') == '1' or os.environ.get('AWS_LAMBDA_FUNCTION_NAME')):
+        for folder in [
+            app.config.get('DATASET_FOLDER'),
+            app.config.get('MODEL_FOLDER'),
+            os.path.join(app.root_path, 'instance')
+        ]:
+            if folder:
+                try:
+                    os.makedirs(folder, exist_ok=True)
+                except OSError:
+                    pass
 
     db.init_app(app)
     csrf.init_app(app)
 
     with app.app_context():
-        db.create_all()
-        _init_default_admin(app)
+        try:
+            db.create_all()
+            _init_default_admin(app)
+        except Exception as e:
+            logger.warning("Database initialization deferred/skipped on serverless: %s", e)
 
     _register_routes(app)
     return app

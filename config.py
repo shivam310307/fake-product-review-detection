@@ -10,6 +10,12 @@ from pathlib import Path
 
 BASE_DIR = Path(__file__).resolve().parent
 
+# Serverless environment detection (Vercel / AWS Lambda)
+IS_SERVERLESS = os.environ.get('VERCEL') == '1' or bool(os.environ.get('AWS_LAMBDA_FUNCTION_NAME'))
+
+if IS_SERVERLESS:
+    os.environ.setdefault('MPLCONFIGDIR', '/tmp/matplotlib')
+
 class Config:
     """Base application configuration."""
     # Security Configuration
@@ -22,19 +28,25 @@ class Config:
     SESSION_COOKIE_SAMESITE = 'Lax'
     PERMANENT_SESSION_LIFETIME = 3600 * 4  # 4 hours
     
-    # Database Configuration (SQLite)
-    SQLALCHEMY_DATABASE_URI = os.environ.get(
-        'DATABASE_URL', 
-        f"sqlite:///{BASE_DIR / 'instance' / 'reviewguard.db'}"
-    )
+    # Database Configuration (SQLite) - Use /tmp for writable SQLite on serverless
+    if IS_SERVERLESS:
+        SQLALCHEMY_DATABASE_URI = os.environ.get('DATABASE_URL', 'sqlite:////tmp/reviewguard.db')
+        UPLOAD_FOLDER = os.environ.get('UPLOAD_FOLDER', '/tmp/uploads')
+        REPORT_FOLDER = os.environ.get('REPORT_FOLDER', '/tmp/reports')
+    else:
+        SQLALCHEMY_DATABASE_URI = os.environ.get(
+            'DATABASE_URL', 
+            f"sqlite:///{BASE_DIR / 'instance' / 'reviewguard.db'}"
+        )
+        UPLOAD_FOLDER = str(BASE_DIR / 'uploads')
+        REPORT_FOLDER = str(BASE_DIR / 'reports')
+        
     SQLALCHEMY_TRACK_MODIFICATIONS = False
     
     # File Upload Limits & Paths
     MAX_CONTENT_LENGTH = 16 * 1024 * 1024  # 16 MB max upload size
-    UPLOAD_FOLDER = str(BASE_DIR / 'uploads')
     DATASET_FOLDER = str(BASE_DIR / 'dataset')
     MODEL_FOLDER = str(BASE_DIR / 'models')
-    REPORT_FOLDER = str(BASE_DIR / 'reports')
     ALLOWED_EXTENSIONS = {'csv'}
     
     # Model Artifact Paths
